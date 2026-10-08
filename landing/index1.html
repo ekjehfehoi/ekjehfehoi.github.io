@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App Store Rejection Decoder — free tool for AI-built apps</title>
+<meta name="description" content="Paste your App Store or Google Play rejection message and get the exact guideline, the real reason, the fix list, and a ready-to-run AI prompt. Free. No signup.">
+<style>
+:root{
+  --bg:#0b0d10; --panel:#12161b; --panel2:#171c23; --line:#232b35;
+  --txt:#e8edf3; --mut:#8d9aab; --acc:#6ee7a8; --acc2:#7cc4ff;
+  --red:#ff6b6b; --org:#ffb057; --yel:#ffe066;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(110,231,168,.10), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(124,196,255,.10), transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;color:#08110c;font-size:16px}
+.lang{display:flex;gap:6px}
+.lang button{background:var(--panel);border:1px solid var(--line);color:var(--mut);padding:6px 12px;border-radius:999px;cursor:pointer;font-size:13px}
+.lang button.on{color:#08110c;background:var(--acc);border-color:var(--acc);font-weight:700}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.12;letter-spacing:-.02em;margin:0 0 12px}
+h1 .g{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);font-size:17px;max-width:62ch;margin:0 0 26px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--mut);padding:7px 13px;border-radius:999px;cursor:pointer;font-size:13px}
+.chip.on{color:var(--txt);border-color:var(--acc);background:rgba(110,231,168,.10)}
+textarea{
+  width:100%;min-height:150px;background:#0e1216;border:1px solid var(--line);color:var(--txt);
+  border-radius:10px;padding:14px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical
+}
+textarea:focus{outline:none;border-color:var(--acc2)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button.p{background:linear-gradient(135deg,var(--acc),#4fd39a);color:#08110c;border:0;padding:13px 22px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}
+button.s{background:var(--panel2);color:var(--txt);border:1px solid var(--line);padding:13px 18px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer}
+button.p:hover{filter:brightness(1.07)}
+button.s:hover{border-color:var(--acc2)}
+.hint{color:var(--mut);font-size:13px;margin-top:10px}
+.samples{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.samples button{font-size:12px;padding:6px 10px}
+#out{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.res{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.res .hd{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;background:var(--panel2)}
+.res h3{margin:0;font-size:19px;letter-spacing:-.01em}
+.res .gl{color:var(--mut);font-size:13px;margin-top:4px}
+.sev{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.sev.blocker{background:rgba(255,107,107,.15);color:var(--red);border:1px solid rgba(255,107,107,.35)}
+.sev.high{background:rgba(255,176,87,.15);color:var(--org);border:1px solid rgba(255,176,87,.35)}
+.sev.info{background:rgba(141,154,171,.14);color:var(--mut);border:1px solid var(--line)}
+.res .bd{padding:18px}
+.lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:0 0 6px}
+.res p{margin:0 0 16px;color:#cdd7e2}
+ul{margin:0 0 16px;padding-left:20px}
+li{margin-bottom:7px;color:#cdd7e2}
+code,.files span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+.files{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.files span{background:#0e1216;border:1px solid var(--line);color:var(--acc2);padding:5px 9px;border-radius:7px}
+.prompt{background:#0e1216;border:1px solid var(--line);border-radius:10px;padding:14px;position:relative}
+.prompt pre{white-space:pre-wrap;word-break:break-word;margin:0;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cdd7e2}
+.copy{position:absolute;top:8px;right:8px;font-size:11px;padding:5px 9px;background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:7px;cursor:pointer}
+.copy:hover{color:var(--acc);border-color:var(--acc)}
+.match{font-size:12px;color:var(--mut);margin-bottom:10px}
+.match b{color:var(--acc)}
+.cta{margin-top:26px;background:linear-gradient(135deg,rgba(110,231,168,.12),rgba(124,196,255,.10));border:1px solid rgba(110,231,168,.3);border-radius:var(--r);padding:22px}
+.cta h3{margin:0 0 8px;font-size:21px}
+.cta p{margin:0 0 14px;color:#cdd7e2}
+.cta .btns{margin-top:0}
+.stat{display:flex;gap:18px;flex-wrap:wrap;color:var(--mut);font-size:13px;margin:18px 0 0}
+.stat b{color:var(--txt)}
+footer{margin-top:40px;color:#5d6a7a;font-size:12.5px;line-height:1.7;border-top:1px solid var(--line);padding-top:18px}
+footer a{color:var(--acc2);text-decoration:none}
+.empty{color:var(--mut);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><div class="logo">⌘</div><span data-i18n="brand">VibeShip</span></div>
+  <div class="lang">
+    <button id="l-en" class="on" onclick="setLang('en')">EN</button>
+    <button id="l-ru" onclick="setLang('ru')">RU</button>
+  </div>
+</header>
+
+<h1><span data-i18n="h1a">Paste your rejection.</span><br><span class="g" data-i18n="h1b">Get the exact fix.</span></h1>
+<p class="sub" data-i18n="sub">App Store and Google Play rejection messages are written to be vague. This decoder matches your message against 25 known rejection patterns for AI-built and wrapped web apps, tells you what the reviewer actually saw, and generates a prompt that makes your AI agent do the fix.</p>
+
+<div class="card">
+  <div class="row" id="platform">
+    <button class="chip on" data-p="both" data-i18n="p_both">Any platform</button>
+    <button class="chip" data-p="apple" data-i18n="p_apple">App Store / Apple</button>
+    <button class="chip" data-p="google" data-i18n="p_google">Google Play</button>
+  </div>
+  <textarea id="in" data-i18n-ph="ph" placeholder="Paste the full rejection email or Resolution Centre message here..."></textarea>
+  <div class="btns">
+    <button class="p" onclick="analyze()" data-i18n="go">Decode rejection</button>
+    <button class="s" onclick="clearAll()" data-i18n="clear">Clear</button>
+  </div>
+  <div class="samples" id="samples"></div>
+  <div class="hint" data-i18n="hint">100% local. Your rejection text never leaves the browser — no server, no analytics, no signup.</div>
+</div>
+
+<div id="out"><p class="empty" data-i18n="empty">Results appear here.</p></div>
+
+<div class="stat" id="stat"></div>
+
+<div class="cta" id="cta" style="display:none">
+  <h3 data-i18n="cta_h">Tired of decoding one rejection at a time?</h3>
+  <p data-i18n="cta_p">The VibeShip Kit is the full version: a rejection playbook for all 25 cases, a store-compliant Capacitor starter that passes 4.2, ready-made privacy policy + account deletion page, App Store Connect / Play Console copy, and an AI agent prompt pack that makes Cursor or Claude do the whole setup for you. One-time price, lifetime updates.</p>
+  <div class="btns">
+    <button class="p" onclick="window.open('https://vibeship.gumroad.com/l/kit','_blank')" data-i18n="cta_b">Get the full Kit →</button>
+    <button class="s" onclick="window.open('../landing/index.html','_blank')" data-i18n="cta_b2">See what's inside</button>
+  </div>
+</div>
+
+<footer>
+  <span data-i18n="foot">Built for people who ship apps with AI and hit the store review wall. Not affiliated with Apple Inc. or Google LLC. This tool explains common rejection patterns and does not guarantee approval.</span><br>
+  <span data-i18n="foot2">Free forever. If it saved you a review cycle, the Kit is how you say thanks.</span>
+</footer>
+</div>
+
+<script>
+const I18N = {
+  en:{
+    brand:"VibeShip",
+    h1a:"Paste your rejection.", h1b:"Get the exact fix.",
+    sub:"App Store and Google Play rejection messages are written to be vague. This decoder matches your message against 25 known rejection patterns for AI-built and wrapped web apps, tells you what the reviewer actually saw, and generates a prompt that makes your AI agent do the fix.",
+    p_both:"Any platform", p_apple:"App Store / Apple", p_google:"Google Play",
+    ph:"Paste the full rejection email or Resolution Centre message here...",
+    go:"Decode rejection", clear:"Clear",
+    hint:"100% local. Your rejection text never leaves the browser — no server, no analytics, no signup.",
+    empty:"Results appear here.",
+    try:"Try an example:",
+    s1:"Apple 4.2 minimum functionality", s2:"Google Play data safety", s3:"Apple 2.1 demo account", s4:"Apple ITMS-91053", s5:"Google 12 testers",
+    found:"matches found", why:"Why you got this", fix:"How to fix it", files:"Files to change",
+    prompt:"AI prompt (paste into Cursor / Claude / ChatGPT)", copy:"Copy", copied:"Copied",
+    nomatch:"No known pattern matched.", nomatch_p:"That usually means a niche or new rejection. Use the generic triage prompt below — it works even on messages we have never seen.",
+    score:"Match confidence:", conf:"matched phrases",
+    cta_h:"Tired of decoding one rejection at a time?",
+    cta_p:"The VibeShip Kit is the full version: a rejection playbook for all 25 cases, a store-compliant Capacitor starter that passes 4.2, ready-made privacy policy + account deletion page, App Store Connect / Play Console copy, and an AI agent prompt pack that makes Cursor or Claude do the whole setup for you. One-time price, lifetime updates.",
+    cta_b:"Get the full Kit →", cta_b2:"See what's inside",
+    foot:"Built for people who ship apps with AI and hit the store review wall. Not affiliated with Apple Inc. or Google LLC. This tool explains common rejection patterns and does not guarantee approval.",
+    foot2:"Free forever. If it saved you a review cycle, the Kit is how you say thanks.",
+    stat1:"rejection patterns", stat2:"ready AI prompts", stat3:"platforms", stat4:"updated",
+    loaderr:"Could not load the pattern database. Serve this folder over http (e.g. `python3 -m http.server`) instead of opening index.html directly.",
+    sev_blocker:"blocker", sev_high:"high", sev_info:"info"
+  },
+  ru:{
+    brand:"VibeShip",
+    h1a:"Вставьте текст отказа.", h1b:"Получите точное исправление.",
+    sub:"Отказы App Store и Google Play написаны так, чтобы быть размытыми. Этот декодер сопоставляет ваше сообщение с 25 известными шаблонами отказов для ИИ-приложений и веб-обёрток, объясняет, что реально увидел ревьюер, и генерирует промпт, по которому ваш ИИ-агент сделает исправление.",
+    p_both:"Любая платформа", p_apple:"App Store / Apple", p_google:"Google Play",
+    ph:"Вставьте полный текст письма об отказе или сообщения из Resolution Centre...",
+    go:"Расшифровать отказ", clear:"Очистить",
+    hint:"100% локально. Текст отказа не покидает браузер — ни сервера, ни аналитики, ни регистрации.",
+    empty:"Результаты появятся здесь.",
+    try:"Попробуйте пример:",
+    s1:"Apple 4.2 минимальная функциональность", s2:"Google Play data safety", s3:"Apple 2.1 демо-аккаунт", s4:"Apple ITMS-91053", s5:"Google 12 тестировщиков",
+    found:"совпадений найдено", why:"Почему вы это получили", fix:"Как исправить", files:"Какие файлы менять",
+    prompt:"Промпт для ИИ (вставьте в Cursor / Claude / ChatGPT)", copy:"Копировать", copied:"Скопировано",
+    nomatch:"Совпадений с известными шаблонами нет.", nomatch_p:"Обычно это значит нишевый или новый отказ. Используйте универсальный триаж-промпт ниже — он работает даже на сообщениях, которых мы не видели.",
+    score:"Уверенность совпадения:", conf:"совпавших фраз",
+    cta_h:"Надоело расшифровывать по одному отказу?",
+    cta_p:"VibeShip Kit — полная версия: плейбук по всем 25 случаям отказов, Capacitor-стартер, соответствующий требованиям сторов и проходящий 4.2, готовые политика конфиденциальности и страница удаления аккаунта, тексты для App Store Connect / Play Console и набор промптов для ИИ-агента, чтобы Cursor или Claude сделали всю настройку за вас. Разовая цена, обновления навсегда.",
+    cta_b:"Забрать полный Kit →", cta_b2:"Что внутри",
+    foot:"Сделано для тех, кто собирает приложения с помощью ИИ и упирается в стену ревью. Не аффилировано с Apple Inc. и Google LLC. Инструмент объясняет типовые причины отказов и не гарантирует одобрение.",
+    foot2:"Бесплатно навсегда. Если сэкономили круг ревью — Kit это способ сказать спасибо.",
+    stat1:"шаблонов отказов", stat2:"готовых промптов", stat3:"платформы", stat4:"обновлено",
+    loaderr:"Не удалось загрузить базу шаблонов. Откройте эту папку через http (например `python3 -m http.server`), а не двойным кликом по index.html.",
+    sev_blocker:"блокер", sev_high:"высокий", sev_info:"инфо"
+  }
+};
+
+const SAMPLES = {
+  "Apple 4.2 minimum functionality":"Guideline 4.2 - Design - Minimum Functionality\n\nYour app does not include any native functionality and appears to be a bundle of web content. The app experience should include native features and behaviour to justify inclusion in the App Store.\n\nNext Steps\nTo resolve this issue, please revise your app to ensure it includes native iOS functionality beyond simply displaying a website.",
+  "Apple 4.2 minimum functionality|ru":"Пункт 4.2 - Дизайн - Минимальная функциональность\n\nВаше приложение не содержит нативной функциональности и представляет собой набор веб-контента.",
+  "Google Play data safety":"Your app has been rejected for an Invalid Data safety form.\n\nIssue found: Inconsistency in declared data collection. Our analysis detected that your app collects Device or other IDs through a third-party SDK that you have not declared in the Data safety section.\n\nYou must declare all data collection, including collection by embedded third-party SDKs.",
+  "Apple 2.1 demo account":"Guideline 2.1 - Information Needed\n\nWe were not able to sign in with the demo credentials provided, and the app requires an account to access any content. Please provide a working demo account and complete information about the features available behind the login.",
+  "Apple ITMS-91053":"ITMS-91053: Missing API declaration - Your app's code in the bundle references one or more required reason APIs: NSPrivacyAccessedAPICategoryFileTimestamp, NSPrivacyAccessedAPICategoryUserDefaults. While this app may be functioning correctly, we need a privacy manifest declaring these APIs.",
+  "Google 12 testers":"Your app is not eligible for production release yet. Personal developer accounts created after November 13, 2023 must have at least 12 testers who have opted in to testing for 14 consecutive days before applying for production access.",
+  "Apple 3.1.1 IAP":"Guideline 3.1.1 - Business - Payments - In-App Purchase\n\nYour app includes a payment mechanism that allows users to purchase digital content or subscriptions using a payment provider other than Apple's in-app purchase system. Apps may not use their own mechanism to unlock digital content.",
+  "Login loop in the app":"My app works fine on the web but when I build it with Capacitor the login loop never ends. I use Supabase auth and the OAuth redirect comes back to file:// which is not allowed. Session cookies seem to be lost every restart."
+};
+
+let LANG="en", PLATFORM="both", DB=null;
+
+function setLang(l){
+  LANG=l;
+  document.getElementById("l-en").classList.toggle("on",l==="en");
+  document.getElementById("l-ru").classList.toggle("on",l==="ru");
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k=el.getAttribute("data-i18n");
+    if(I18N[l][k]!==undefined) el.textContent=I18N[l][k];
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+    const k=el.getAttribute("data-i18n-ph");
+    if(I18N[l][k]!==undefined) el.setAttribute("placeholder",I18N[l][k]);
+  });
+  renderSamples(); renderStat();
+  if(document.getElementById("in").value.trim()) analyze();
+}
+
+function renderSamples(){
+  const box=document.getElementById("samples");
+  box.innerHTML='<span class="hint">'+I18N[LANG].try+'</span>';
+  const keys=["Apple 4.2 minimum functionality","Google Play data safety","Apple 2.1 demo account","Apple ITMS-91053","Google 12 testers"];
+  keys.forEach(k=>{
+    const b=document.createElement("button");
+    b.className="chip"; b.textContent=I18N[LANG]["s"+(keys.indexOf(k)+1)];
+    b.onclick=()=>{document.getElementById("in").value=SAMPLES[k];analyze();};
+    box.appendChild(b);
+  });
+}
+
+function renderStat(){
+  if(!DB) return;
+  const t=I18N[LANG];
+  const n=DB.entries.filter(e=>e.id!=="generic-unknown").length;
+  document.getElementById("stat").innerHTML=
+    "<span><b>"+n+"</b> "+t.stat1+"</span>"+
+    "<span><b>"+n+"</b> "+t.stat2+"</span>"+
+    "<span><b>2</b> "+t.stat3+"</span>"+
+    "<span>"+t.stat4+": <b>"+DB.meta.updated+"</b></span>";
+}
+
+document.querySelectorAll("#platform .chip").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("#platform .chip").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); PLATFORM=b.dataset.p;
+    if(document.getElementById("in").value.trim()) analyze();
+  };
+});
+
+function clearAll(){
+  document.getElementById("in").value="";
+  document.getElementById("out").innerHTML='<p class="empty">'+I18N[LANG].empty+'</p>';
+  document.getElementById("cta").style.display="none";
+}
+
+function scoreEntry(entry,text){
+  const t=text.toLowerCase();
+  let hits=[];
+  (entry.match||[]).forEach(m=>{ if(t.includes(String(m).toLowerCase())) hits.push(m); });
+  if(entry.code && t.includes(String(entry.code).toLowerCase())) hits.push(entry.code);
+  if(!hits.length) return 0;
+  let s=hits.length*10;
+  if(entry.severity==="blocker") s+=4;
+  if(entry.frequency==="very-high") s+=3; else if(entry.frequency==="high") s+=2;
+  return {score:s,hits:hits};
+}
+
+function analyze(){
+  const text=document.getElementById("in").value.trim();
+  const out=document.getElementById("out");
+  const t=I18N[LANG];
+  if(!text){out.innerHTML='<p class="empty">'+t.empty+'</p>';document.getElementById("cta").style.display="none";return;}
+  if(!DB){out.innerHTML='<p class="empty">'+t.loaderr+'</p>';return;}
+
+  let results=[];
+  DB.entries.forEach(e=>{
+    if(e.id==="generic-unknown") return;
+    if(PLATFORM!=="both" && e.platform!==PLATFORM && e.platform!=="both") return;
+    const r=scoreEntry(e,text);
+    if(r) results.push({e:e,score:r.score,hits:r.hits});
+  });
+  results.sort((a,b)=>b.score-a.score);
+
+  if(!results.length){
+    const g=DB.entries.find(e=>e.id==="generic-unknown");
+    out.innerHTML=card(g,0,["—"],true);
+  } else {
+    const top=results.slice(0,3);
+    out.innerHTML=top.map(r=>card(r.e,r.score,r.hits,false)).join("");
+  }
+  document.getElementById("cta").style.display=results.length?"block":"block";
+}
+
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+function card(e,score,hits,empty){
+  const t=I18N[LANG], L=LANG;
+  const sevCls=e.severity==="blocker"?"blocker":(e.severity==="high"?"high":"info");
+  const sevTxt=t["sev_"+(e.severity==="medium"?"high":e.severity)]||e.severity;
+  let html='<div class="res"><div class="hd"><div><h3>'+esc(e.name[L]||e.name.en)+'</h3>';
+  html+='<div class="gl">'+(e.platform==="apple"?"App Store":e.platform==="google"?"Google Play":"App Store + Google Play")+' · Guideline '+esc(e.guideline)+(e.code&&e.code!==e.guideline?' · '+esc(e.code):'')+'</div></div>';
+  html+='<span class="sev '+sevCls+'">'+esc(sevTxt)+'</span></div><div class="bd">';
+
+  if(!empty && hits.length){
+    html+='<div class="match">'+t.score+' <b>'+Math.min(99,Math.round(score*2.2))+'%</b> · '+t.conf+': '+hits.map(h=>'<b>"'+esc(h)+'"</b>').join(", ")+'</div>';
+  } else if(empty){
+    html+='<div class="match">'+t.nomatch+' '+t.nomatch_p+'</div>';
+  }
+
+  html+='<p class="lbl">'+t.why+'</p><p>'+esc(e.reason[L]||e.reason.en)+'</p>';
+  html+='<p class="lbl">'+t.fix+'</p><ul>'+(e.fix[L]||e.fix.en).map(x=>"<li>"+esc(x)+"</li>").join("")+'</ul>';
+
+  if(e.files && e.files.length){
+    html+='<p class="lbl">'+t.files+'</p><div class="files">'+e.files.map(f=>"<span>"+esc(f)+"</span>").join("")+'</div>';
+  }
+
+  const pr=(e.aiPrompt[L]||e.aiPrompt.en);
+  const pid="p_"+e.id;
+  html+='<p class="lbl">'+t.prompt+'</p><div class="prompt"><button class="copy" onclick="copyP(\''+pid+'\',this)">'+t.copy+'</button><pre id="'+pid+'">'+esc(pr)+'</pre></div>';
+  html+='</div></div>';
+  return html;
+}
+
+function copyP(id,btn){
+  const txt=document.getElementById(id).innerText;
+  const done=()=>{const o=btn.textContent;btn.textContent=I18N[LANG].copied;setTimeout(()=>btn.textContent=o,1400);};
+  if(navigator.clipboard && window.isSecureContext){navigator.clipboard.writeText(txt).then(done).catch(()=>fallback());}
+  else fallback();
+  function fallback(){
+    const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){}document.body.removeChild(ta);
+  }
+}
+
+async function init(){
+  try{
+    const r=await fetch("rejections.json");
+    DB=await r.json();
+  }catch(e){
+    DB=null;
+    document.getElementById("out").innerHTML='<p class="empty">'+I18N[LANG].loaderr+'</p>';
+    return;
+  }
+  renderSamples(); renderStat();
+  document.getElementById("in").addEventListener("keydown",ev=>{
+    if((ev.metaKey||ev.ctrlKey)&&ev.key==="Enter") analyze();
+  });
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VibeShip — ship your AI-built app to the App Store and Google Play</title>
+<meta name="description" content="The store-approval kit for AI-built apps. Rejection playbook, compliant Capacitor starter, privacy + account deletion pack, store listing copy, and AI agent prompts. One-time price.">
+<style>
+:root{
+  --bg:#08090c;--panel:#10131a;--panel2:#151a22;--line:#222a35;
+  --txt:#eaeff5;--mut:#8b98a9;--acc:#6ee7a8;--acc2:#7cc4ff;--gold:#ffd479;
+  --r:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+a{color:var(--acc2)}
+nav{position:sticky;top:0;z-index:20;background:rgba(8,9,12,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;color:#06110b;font-weight:900}
+.navlinks{display:flex;gap:22px;align-items:center}
+.navlinks a{color:var(--mut);text-decoration:none;font-size:14.5px}
+.navlinks a:hover{color:var(--txt)}
+.lang button{background:var(--panel);border:1px solid var(--line);color:var(--mut);padding:5px 11px;border-radius:999px;cursor:pointer;font-size:12.5px;margin-left:5px}
+.lang button.on{background:var(--acc);color:#06110b;border-color:var(--acc);font-weight:800}
+.hero{padding:74px 0 54px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:520px;
+  background:radial-gradient(600px 300px at 30% 40%,rgba(110,231,168,.16),transparent 65%),
+             radial-gradient(600px 300px at 75% 30%,rgba(124,196,255,.15),transparent 65%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,107,107,.10);border:1px solid rgba(255,107,107,.32);
+  color:#ff9d9d;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:22px}
+.dot{width:7px;height:7px;border-radius:50%;background:#ff6b6b;box-shadow:0 0 0 0 rgba(255,107,107,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,107,107,.55)}70%{box-shadow:0 0 0 9px rgba(255,107,107,0)}100%{box-shadow:0 0 0 0 rgba(255,107,107,0)}}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.06;letter-spacing:-.03em;margin:0 0 20px;max-width:19ch}
+h1 .g{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:19px;color:#c3cdda;max-width:60ch;margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;padding:15px 26px;border-radius:12px;font-weight:800;font-size:16px;text-decoration:none;cursor:pointer;border:0}
+.btn.p{background:linear-gradient(135deg,var(--acc),#4ed39a);color:#06110b;box-shadow:0 10px 34px rgba(110,231,168,.20)}
+.btn.p:hover{filter:brightness(1.06)}
+.btn.s{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+.btn.s:hover{border-color:var(--acc2)}
+.micro{color:var(--mut);font-size:13px;margin-top:14px}
+.social{display:flex;gap:26px;flex-wrap:wrap;margin-top:38px;color:var(--mut);font-size:13.5px}
+.social b{display:block;color:var(--txt);font-size:21px;letter-spacing:-.02em}
+section{padding:60px 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;line-height:1.15;margin:0 0 14px}
+.h2sub{color:var(--mut);font-size:17px;max-width:64ch;margin:0 0 34px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.card h3{margin:0 0 8px;font-size:18px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--mut);font-size:14.5px}
+.num{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--acc);font-size:12.5px;margin-bottom:8px;display:block}
+.pain{background:linear-gradient(180deg,rgba(255,107,107,.06),transparent);border-color:rgba(255,107,107,.20)}
+.quote{border-left:3px solid var(--acc);padding:4px 0 4px 16px;color:#cdd7e2;font-size:15.5px;margin:0 0 18px}
+.quote span{display:block;color:var(--mut);font-size:13px;margin-top:6px}
+.contents{display:flex;flex-direction:column;gap:14px}
+.item{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;align-items:flex-start}
+.tick{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:rgba(110,231,168,.14);border:1px solid rgba(110,231,168,.35);
+  color:var(--acc);display:grid;place-items:center;font-weight:900;font-size:14px}
+.item h3{margin:0 0 5px;font-size:17px}
+.item p{margin:0;color:var(--mut);font-size:14.5px}
+.tag{display:inline-block;margin-left:8px;font-size:11px;padding:3px 8px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--acc2);vertical-align:middle}
+.pricing{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start}
+.tier{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px;position:relative}
+.tier.hot{border-color:rgba(110,231,168,.45);background:linear-gradient(180deg,rgba(110,231,168,.07),var(--panel))}
+.ribbon{position:absolute;top:-11px;left:24px;background:var(--acc);color:#06110b;font-size:11px;font-weight:900;
+  padding:4px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+.tier .name{font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.tier .price{font-size:40px;letter-spacing:-.03em;font-weight:900;margin:8px 0 2px}
+.tier .price s{font-size:18px;color:var(--mut);font-weight:600;margin-left:8px}
+.tier .per{color:var(--mut);font-size:13.5px;margin-bottom:18px}
+.tier ul{list-style:none;padding:0;margin:0 0 22px}
+.tier li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;color:#cdd7e2;border-top:1px solid var(--line)}
+.tier li:first-child{border-top:0}
+.tier li::before{content:"✓";position:absolute;left:0;color:var(--acc);font-weight:900}
+.tier li.off{color:#5f6c7c}
+.tier li.off::before{content:"—";color:#4b5765}
+.tier .btn{width:100%;text-align:center}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+.faq summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--acc);font-weight:900}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:12px 0 0;color:var(--mut);font-size:15px}
+.guarantee{background:linear-gradient(135deg,rgba(124,196,255,.10),rgba(110,231,168,.08));border:1px solid rgba(124,196,255,.28);
+  border-radius:20px;padding:28px;text-align:center}
+.final{padding:70px 0;text-align:center}
+.final h2{max-width:22ch;margin:0 auto 16px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:#5d6a7a;font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0d1116;border:1px solid var(--line);padding:2px 6px;border-radius:6px;font-size:13.5px;color:var(--acc2)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand"><div class="logo">V</div>VibeShip</div>
+  <div class="navlinks">
+    <a href="#contents" data-i18n="nav1">What's inside</a>
+    <a href="#pricing" data-i18n="nav2">Pricing</a>
+    <a href="#faq" data-i18n="nav3">FAQ</a>
+    <a href="https://vibeship.github.io/decoder/" data-i18n="nav4">Free decoder ↗</a>
+    <span class="lang"><button id="l-en" class="on" onclick="setLang('en')">EN</button><button id="l-ru" onclick="setLang('ru')">RU</button></span>
+  </div>
+</div></nav>
+
+<div class="hero"><div class="wrap">
+  <div class="badge"><span class="dot"></span><span data-i18n="badge">March 2026: Apple started blocking AI-built apps. Review got harder.</span></div>
+  <h1><span data-i18n="h1a">You vibe-coded the app.</span> <span class="g" data-i18n="h1b">Now pass the review.</span></h1>
+  <p class="lead" data-i18n="lead">AI tools build the product in an afternoon and then go silent exactly where the money is: App Store and Google Play review. VibeShip Kit is the missing last mile — a rejection playbook, a store-compliant native starter, the legal pages stores require, and AI prompts that make your agent do the whole setup.</p>
+  <div class="cta">
+    <a class="btn p" href="#pricing" data-i18n="cta1">Get the Kit</a>
+    <a class="btn s" href="https://vibeship.github.io/decoder/" data-i18n="cta2">Try the free Rejection Decoder</a>
+  </div>
+  <div class="micro" data-i18n="micro">One-time payment · Lifetime updates · 14-day refund, no questions</div>
+  <div class="social">
+    <div><b>26</b><span data-i18n="s1">rejection patterns decoded</span></div>
+    <div><b>2</b><span data-i18n="s2">stores: Apple + Google</span></div>
+    <div><b>EN/RU</b><span data-i18n="s3">both languages included</span></div>
+    <div><b>$0</b><span data-i18n="s4">subscription. Pay once.</span></div>
+  </div>
+</div></div>
+
+<section><div class="wrap">
+  <h2 data-i18n="p_h">The wall nobody warns you about</h2>
+  <p class="h2sub" data-i18n="p_sub">Every AI app builder sells the same dream: prompt to product in 20 minutes. None of them mention what happens after. The store review is where AI-built apps die — and each rejection costs 2 to 7 days.</p>
+  <div class="grid g3">
+    <div class="card pain"><span class="num">01</span><h3 data-i18n="p1h">Your app is "just a website"</h3><p data-i18n="p1t">Guideline 4.2. A WebView pointed at a URL with no native capability is a web clip. This is rejection #1 for Lovable, Bolt, Replit and Cursor builds.</p></div>
+    <div class="card pain"><span class="num">02</span><h3 data-i18n="p2h">Apple tightened the screws</h3><p data-i18n="p2t">In March 2026 Apple blocked App Store updates for apps built with Replit and Vibecode under guideline 2.5.2. Coverage in Forbes, MacRumors, AppleInsider. Reviewers now know what an AI build looks like.</p></div>
+    <div class="card pain"><span class="num">03</span><h3 data-i18n="p3h">Nobody generated the boring parts</h3><p data-i18n="p3t">Privacy manifest, account deletion, encryption declaration, Data safety form, demo account, StoreKit instead of Stripe. No prompt produces these. Every one of them is a hard blocker.</p></div>
+    <div class="card pain"><span class="num">04</span><h3 data-i18n="p4h">Google has a calendar wall</h3><p data-i18n="p4t">Personal developer accounts created after 13 Nov 2023 need 12 real testers for 14 consecutive days before production. You cannot buy around it. You can only start the clock earlier.</p></div>
+    <div class="card pain"><span class="num">05</span><h3 data-i18n="p5h">Auth breaks inside the shell</h3><p data-i18n="p5t">Supabase, Clerk, Auth0 and Cognito sessions rely on http origins and cookies. A Capacitor export serves local assets. Result: infinite login loop, broken OAuth redirect, silently failing Sign in with Apple.</p></div>
+    <div class="card pain"><span class="num">06</span><h3 data-i18n="p6h">Wrappers cost money forever</h3><p data-i18n="p6t">Median is a subscription with tiered plugin upcharges. Despia is about $250 per app. Agency submission services run $500–2000 per app. The Kit is a one-time price and you own the code.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2 data-i18n="q_h">What rejection actually costs</h2>
+  <p class="h2sub" data-i18n="q_sub">Three review cycles is normal for a first submission. That is 2–4 weeks between "app is finished" and "app earns money".</p>
+  <div class="grid g2">
+    <div class="card"><p class="quote" data-i18n="q1">"Rejected under 4.2 twice, then 2.1 because they couldn't sign in, then ITMS-91053 on the third upload. Six weeks and $99 of developer account before my app was live."<span data-i18n="q1a">— typical first-time AI builder, r/vibecoding</span></p></div>
+    <div class="card"><p class="quote" data-i18n="q2">"Apple blocked updates for apps built with Replit and Vibecode. If your app renders AI-generated content in an in-app WebView, you are now a policy question, not a technical one."<span data-i18n="q2a">— Forbes, MacRumors and AppleInsider, March 2026</span></p></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><span class="num" data-i18n="m1n">2–7 days</span><h3 data-i18n="m1h">per review cycle</h3><p data-i18n="m1t">Apple averages 24–48h, Google 2–7 days. Multiply by three cycles.</p></div>
+    <div class="card"><span class="num" data-i18n="m2n">$99 + $25</span><h3 data-i18n="m2h">already spent</h3><p data-i18n="m2t">Apple Developer Program yearly, Google Play one-time. Sunk before you earn a cent.</p></div>
+    <div class="card"><span class="num" data-i18n="m3n">14 days</span><h3 data-i18n="m3h">minimum Google wait</h3><p data-i18n="m3t">Closed testing with 12 testers. Starts only when they opt in, not when you do.</p></div>
+  </div>
+</div></section>
+
+<section id="contents"><div class="wrap">
+  <h2 data-i18n="c_h">What's inside the Kit</h2>
+  <p class="h2sub" data-i18n="c_sub">Six modules. Every one of them is a thing that blocks your release, delivered as copy-paste files rather than theory.</p>
+  <div class="contents">
+    <div class="item"><div class="tick">1</div><div><h3 data-i18n="c1h">The Rejection Playbook <span class="tag">26 cases</span></h3><p data-i18n="c1t">Every App Store and Google Play rejection an AI-built app realistically gets: the real guideline behind the vague wording, what the reviewer actually saw, the minimum fix, the files to change, and a ready reply for the Resolution Centre. Written so you paste the rejection text and get the answer.</p></div></div>
+    <div class="item"><div class="tick">2</div><div><h3 data-i18n="c2h">Store-compliant Capacitor starter <span class="tag">code</span></h3><p data-i18n="c2t">A production native shell that is deliberately built to survive guideline 4.2: bundled assets with a remote update channel and offline fallback, correct iOS/Android schemes so your Supabase/Clerk auth actually works, PrivacyInfo.xcprivacy filled in, encryption declaration, push, Sign in with Apple, biometric unlock, account deletion screen, deep links. You point it at your URL and it builds.</p></div></div>
+    <div class="item"><div class="tick">3</div><div><h3 data-i18n="c3h">Compliance pack <span class="tag">legal pages</span></h3><p data-i18n="c3t">Privacy policy template (EN + RU) that matches what stores expect, a working account deletion web page with the backend endpoint spec, terms of service, EULA for UGC apps, and the exact answer sheet for the Google Play Data safety form and Apple's App Privacy label.</p></div></div>
+    <div class="item"><div class="tick">4</div><div><h3 data-i18n="c4h">Store listing copy that passes <span class="tag">metadata</span></h3><p data-i18n="c4t">Title, subtitle, description and keyword rules for both stores, with the exact phrases that trigger 2.3.7 and Google's metadata policy removed. Plus the demo-account and test-instructions text that ends most 2.1 rejections in one reply.</p></div></div>
+    <div class="item"><div class="tick">5</div><div><h3 data-i18n="c5h">AI agent prompt pack <span class="tag">the unfair part</span></h3><p data-i18n="c5t">26 battle-tested prompts, one per rejection, engineered for Cursor, Claude Code, Windsurf and Lovable's agent. You paste the prompt into your agent and it produces the diffs, the plists, the gradle files and the store text. This is the Kit doing the work for you instead of teaching you to do it.</p></div></div>
+    <div class="item"><div class="tick">6</div><div><h3 data-i18n="c6h">Launch runbook <span class="tag">checklist</span></h3><p data-i18n="c6t">A dated 21-day plan: what to do on day one so Google's 14-day tester clock is already running while you develop, the pre-submission audit, the assets checklist with exact pixel dimensions, and the rejection log template that stops you making the same mistake twice.</p></div></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="wrap">
+  <h2 data-i18n="pr_h">Pricing</h2>
+  <p class="h2sub" data-i18n="pr_sub">One payment. No subscription, no per-app licence, no plugin tiers. Updates included forever.</p>
+  <div class="pricing">
+    <div class="tier">
+      <div class="name" data-i18n="t1n">Starter</div>
+      <div class="price">$29</div>
+      <div class="per" data-i18n="t1p">one-time · EN + RU</div>
+      <ul>
+        <li data-i18n="t1f1">Rejection Playbook (26 cases)</li>
+        <li data-i18n="t1f2">AI agent prompt pack</li>
+        <li data-i18n="t1f3">Store listing copy rules</li>
+        <li data-i18n="t1f4">21-day launch runbook</li>
+        <li class="off" data-i18n="t1f5">Capacitor starter code</li>
+        <li class="off" data-i18n="t1f6">Compliance pack + legal templates</li>
+      </ul>
+      <a class="btn s" href="https://vibeship.gumroad.com/l/starter" data-i18n="t1b">Buy Starter</a>
+    </div>
+    <div class="tier hot">
+      <div class="ribbon" data-i18n="rib">best value</div>
+      <div class="name" data-i18n="t2n">Pro Kit</div>
+      <div class="price">$79<s>$149</s></div>
+      <div class="per" data-i18n="t2p">launch price · one-time · EN + RU</div>
+      <ul>
+        <li data-i18n="t2f1">Everything in Starter</li>
+        <li data-i18n="t2f2">Store-compliant Capacitor starter (full source)</li>
+        <li data-i18n="t2f3">Compliance pack: privacy policy EN + RU</li>
+        <li data-i18n="t2f4">Account deletion page + backend spec</li>
+        <li data-i18n="t2f5">Data safety / App Privacy answer sheet</li>
+        <li data-i18n="t2f6">Lifetime updates for new guidelines</li>
+      </ul>
+      <a class="btn p" href="https://vibeship.gumroad.com/l/kit" data-i18n="t2b">Get the Pro Kit</a>
+    </div>
+    <div class="tier">
+      <div class="name" data-i18n="t3n">Agency / White-label</div>
+      <div class="price">$497</div>
+      <div class="per" data-i18n="t3p">one-time · resell to your clients</div>
+      <ul>
+        <li data-i18n="t3f1">Everything in Pro</li>
+        <li data-i18n="t3f2">White-label rights: your brand on the Kit</li>
+        <li data-i18n="t3f3">Unlimited client apps</li>
+        <li data-i18n="t3f4">Client-facing rejection reply templates</li>
+        <li data-i18n="t3f5">Rebranded decoder page for your funnel</li>
+        <li data-i18n="t3f6">Priority support channel</li>
+      </ul>
+      <a class="btn s" href="mailto:hello@vibeship.dev?subject=White-label%20Kit" data-i18n="t3b">Request access</a>
+    </div>
+  </div>
+  <div class="guarantee" style="margin-top:22px">
+    <h3 style="margin:0 0 8px;font-size:19px" data-i18n="g_h">14-day refund, no interrogation</h3>
+    <p style="margin:0;color:var(--mut);font-size:15px" data-i18n="g_t">If the Kit does not save you at least one review cycle, email me and you get the money back. I cannot promise approval — App Review is a human process — but I can promise the playbook is the same one used to ship.</p>
+  </div>
+  <p class="micro" style="text-align:center" data-i18n="ru_pay">🇷🇺 Russian buyers: pay in RUB on Boosty — <a href="https://boosty.to/vibeship">boosty.to/vibeship</a> (same content, 4 900 ₽ for Pro).</p>
+</div></section>
+
+<section id="faq" class="faq"><div class="wrap">
+  <h2 data-i18n="f_h">Questions</h2>
+  <p class="h2sub" data-i18n="f_sub">The ones that matter before you pay.</p>
+  <details><summary data-i18n="f1q">Will this guarantee my app gets approved?</summary><p data-i18n="f1a">No, and anyone who promises that is lying to you. App Review is done by humans and they have discretion. What the Kit does is remove the ~90% of rejections that are predictable and mechanical: missing native capability, missing demo account, missing privacy manifest, missing account deletion, wrong payment provider, wrong Data safety answers.</p></details>
+  <details><summary data-i18n="f2q">I built my app in Lovable / Bolt / Replit / Base44. Does it apply?</summary><p data-i18n="f2a">Yes, that is exactly who it is for. Lovable exports a Capacitor project, Bolt and Replit give you a web build you can wrap, and Base44/v0 output is a standard web app. The starter works with any web build you can produce: Next.js, Vite, React, Vue, plain HTML.</p></details>
+  <details><summary data-i18n="f3q">Do I need a Mac?</summary><p data-i18n="f3a">For the iOS build, yes — Xcode only runs on macOS. Options: a used Mac mini, a Mac in the cloud (MacStadium, AWS EC2 Mac, Scaleway), or a friend's Mac for 2 hours. Android has no such requirement. If you have no Mac at all, start with Google Play and ship iOS later.</p></details>
+  <details><summary data-i18n="f4q">Why not just pay Median or Despia to wrap it?</summary><p data-i18n="f4a">You can, and they are good products. Median is a subscription with tiered plugin upcharges and a managed service priced in the thousands. Despia is roughly $250 per app, one-time. Neither one fixes your privacy manifest, your Data safety form, your demo account or your account deletion endpoint — which is where most rejections actually come from. The Kit is cheaper than one Despia licence and it teaches your AI agent to do the compliance work.</p></details>
+  <details><summary data-i18n="f5q">I can't code. Is this usable for me?</summary><p data-i18n="f5a">Yes, with an AI agent. Every module ships a prompt you paste into Cursor, Claude Code, Windsurf or Lovable's agent, and the agent produces the files. The playbook is written in plain language. If you cannot run a terminal at all, the Starter tier plus the prompts still solves most rejections; the Pro starter code assumes you or your agent can run <code>npm install</code>.</p></details>
+  <details><summary data-i18n="f6q">What about updates? Guidelines change.</summary><p data-i18n="f6a">Lifetime updates included. Apple and Google change review rules every year — the March 2026 enforcement wave is the most recent example. When the playbook changes, you get the new version free at the same download link.</p></details>
+  <details><summary data-i18n="f7q">How do I pay from Russia?</summary><p data-i18n="f7a">Gumroad does not accept Russian cards. Use Boosty — <a href="https://boosty.to/vibeship">boosty.to/vibeship</a> — same files, priced in RUB, paid by card, СБП or YooMoney. Telegram Stars is also available on request.</p></details>
+  <details><summary data-i18n="f8q">Can I use it for client apps?</summary><p data-i18n="f8a">Pro licence: yes, use it to build and ship apps for clients. You may not resell the Kit itself. For that, take the Agency / White-label tier.</p></details>
+</div></section>
+
+<div class="final"><div class="wrap">
+  <h2 data-i18n="fin_h">Your app is finished. The store is the only thing left.</h2>
+  <p class="lead" style="margin:0 auto 26px;text-align:center" data-i18n="fin_p">Stop paying for review cycles with weeks of your life.</p>
+  <div class="cta" style="justify-content:center">
+    <a class="btn p" href="#pricing" data-i18n="fin_b">Get the Kit — $79</a>
+    <a class="btn s" href="https://vibeship.github.io/decoder/" data-i18n="fin_b2">Decode a rejection free</a>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  <span>© 2026 VibeShip · <span data-i18n="ft">Not affiliated with Apple Inc. or Google LLC.</span></span>
+  <span><a href="mailto:hello@vibeship.dev">hello@vibeship.dev</a> · <a href="https://vibeship.github.io/decoder/" data-i18n="ft2">Free Rejection Decoder</a></span>
+</div></footer>
+
+<script>
+const T={en:{},ru:{}};
+const EN={
+nav1:"What's inside",nav2:"Pricing",nav3:"FAQ",nav4:"Free decoder ↗",
+badge:"March 2026: Apple started blocking AI-built apps. Review got harder.",
+h1a:"You vibe-coded the app.",h1b:"Now pass the review.",
+lead:"AI tools build the product in an afternoon and then go silent exactly where the money is: App Store and Google Play review. VibeShip Kit is the missing last mile — a rejection playbook, a store-compliant native starter, the legal pages stores require, and AI prompts that make your agent do the whole setup.",
+cta1:"Get the Kit",cta2:"Try the free Rejection Decoder",
+micro:"One-time payment · Lifetime updates · 14-day refund, no questions",
+s1:"rejection patterns decoded",s2:"stores: Apple + Google",s3:"both languages included",s4:"subscription. Pay once.",
+p_h:"The wall nobody warns you about",
+p_sub:"Every AI app builder sells the same dream: prompt to product in 20 minutes. None of them mention what happens after. The store review is where AI-built apps die — and each rejection costs 2 to 7 days.",
+p1h:"Your app is \"just a website\"",p1t:"Guideline 4.2. A WebView pointed at a URL with no native capability is a web clip. This is rejection #1 for Lovable, Bolt, Replit and Cursor builds.",
+p2h:"Apple tightened the screws",p2t:"In March 2026 Apple blocked App Store updates for apps built with Replit and Vibecode under guideline 2.5.2. Coverage in Forbes, MacRumors, AppleInsider. Reviewers now know what an AI build looks like.",
+p3h:"Nobody generated the boring parts",p3t:"Privacy manifest, account deletion, encryption declaration, Data safety form, demo account, StoreKit instead of Stripe. No prompt produces these. Every one of them is a hard blocker.",
+p4h:"Google has a calendar wall",p4t:"Personal developer accounts created after 13 Nov 2023 need 12 real testers for 14 consecutive days before production. You cannot buy around it. You can only start the clock earlier.",
+p5h:"Auth breaks inside the shell",p5t:"Supabase, Clerk, Auth0 and Cognito sessions rely on http origins and cookies. A Capacitor export serves local assets. Result: infinite login loop, broken OAuth redirect, silently failing Sign in with Apple.",
+p6h:"Wrappers cost money forever",p6t:"Median is a subscription with tiered plugin upcharges. Despia is about $250 per app. Agency submission services run $500–2000 per app. The Kit is a one-time price and you own the code.",
+q_h:"What rejection actually costs",
+q_sub:"Three review cycles is normal for a first submission. That is 2–4 weeks between \"app is finished\" and \"app earns money\".",
+q1:"\"Rejected under 4.2 twice, then 2.1 because they couldn't sign in, then ITMS-91053 on the third upload. Six weeks and $99 of developer account before my app was live.\"",
+q1a:"— typical first-time AI builder, r/vibecoding",
+q2:"\"Apple blocked updates for apps built with Replit and Vibecode. If your app renders AI-generated content in an in-app WebView, you are now a policy question, not a technical one.\"",
+q2a:"— Forbes, MacRumors and AppleInsider, March 2026",
+m1n:"2–7 days",m1h:"per review cycle",m1t:"Apple averages 24–48h, Google 2–7 days. Multiply by three cycles.",
+m2n:"$99 + $25",m2h:"already spent",m2t:"Apple Developer Program yearly, Google Play one-time. Sunk before you earn a cent.",
+m3n:"14 days",m3h:"minimum Google wait",m3t:"Closed testing with 12 testers. Starts only when they opt in, not when you do.",
+c_h:"What's inside the Kit",
+c_sub:"Six modules. Every one of them is a thing that blocks your release, delivered as copy-paste files rather than theory.",
+c1h:"The Rejection Playbook",c1t:"Every App Store and Google Play rejection an AI-built app realistically gets: the real guideline behind the vague wording, what the reviewer actually saw, the minimum fix, the files to change, and a ready reply for the Resolution Centre. Written so you paste the rejection text and get the answer.",
+c2h:"Store-compliant Capacitor starter",c2t:"A production native shell deliberately built to survive guideline 4.2: bundled assets with a remote update channel and offline fallback, correct iOS/Android schemes so your Supabase/Clerk auth actually works, PrivacyInfo.xcprivacy filled in, encryption declaration, push, Sign in with Apple, biometric unlock, account deletion screen, deep links. You point it at your URL and it builds.",
+c3h:"Compliance pack",c3t:"Privacy policy template (EN + RU) that matches what stores expect, a working account deletion web page with the backend endpoint spec, terms of service, EULA for UGC apps, and the exact answer sheet for the Google Play Data safety form and Apple's App Privacy label.",
+c4h:"Store listing copy that passes",c4t:"Title, subtitle, description and keyword rules for both stores, with the exact phrases that trigger 2.3.7 and Google's metadata policy removed. Plus the demo-account and test-instructions text that ends most 2.1 rejections in one reply.",
+c5h:"AI agent prompt pack",c5t:"26 battle-tested prompts, one per rejection, engineered for Cursor, Claude Code, Windsurf and Lovable's agent. You paste the prompt into your agent and it produces the diffs, the plists, the gradle files and the store text. This is the Kit doing the work for you instead of teaching you to do it.",
+c6h:"Launch runbook",c6t:"A dated 21-day plan: what to do on day one so Google's 14-day tester clock is already running while you develop, the pre-submission audit, the assets checklist with exact pixel dimensions, and the rejection log template that stops you making the same mistake twice.",
+pr_h:"Pricing",pr_sub:"One payment. No subscription, no per-app licence, no plugin tiers. Updates included forever.",
+t1n:"Starter",t1p:"one-time · EN + RU",t1f1:"Rejection Playbook (26 cases)",t1f2:"AI agent prompt pack",t1f3:"Store listing copy rules",t1f4:"21-day launch runbook",t1f5:"Capacitor starter code",t1f6:"Compliance pack + legal templates",t1b:"Buy Starter",
+rib:"best value",t2n:"Pro Kit",t2p:"launch price · one-time · EN + RU",t2f1:"Everything in Starter",t2f2:"Store-compliant Capacitor starter (full source)",t2f3:"Compliance pack: privacy policy EN + RU",t2f4:"Account deletion page + backend spec",t2f5:"Data safety / App Privacy answer sheet",t2f6:"Lifetime updates for new guidelines",t2b:"Get the Pro Kit",
+t3n:"Agency / White-label",t3p:"one-time · resell to your clients",t3f1:"Everything in Pro",t3f2:"White-label rights: your brand on the Kit",t3f3:"Unlimited client apps",t3f4:"Client-facing rejection reply templates",t3f5:"Rebranded decoder page for your funnel",t3f6:"Priority support channel",t3b:"Request access",
+g_h:"14-day refund, no interrogation",
+g_t:"If the Kit does not save you at least one review cycle, email me and you get the money back. I cannot promise approval — App Review is a human process — but I can promise the playbook is the same one used to ship.",
+ru_pay:"🇷🇺 Russian buyers: pay in RUB on Boosty — boosty.to/vibeship (same content, 4 900 ₽ for Pro).",
+f_h:"Questions",f_sub:"The ones that matter before you pay.",
+f1q:"Will this guarantee my app gets approved?",f1a:"No, and anyone who promises that is lying to you. App Review is done by humans and they have discretion. What the Kit does is remove the ~90% of rejections that are predictable and mechanical: missing native capability, missing demo account, missing privacy manifest, missing account deletion, wrong payment provider, wrong Data safety answers.",
+f2q:"I built my app in Lovable / Bolt / Replit / Base44. Does it apply?",f2a:"Yes, that is exactly who it is for. Lovable exports a Capacitor project, Bolt and Replit give you a web build you can wrap, and Base44/v0 output is a standard web app. The starter works with any web build you can produce: Next.js, Vite, React, Vue, plain HTML.",
+f3q:"Do I need a Mac?",f3a:"For the iOS build, yes — Xcode only runs on macOS. Options: a used Mac mini, a Mac in the cloud (MacStadium, AWS EC2 Mac, Scaleway), or a friend's Mac for 2 hours. Android has no such requirement. If you have no Mac at all, start with Google Play and ship iOS later.",
+f4q:"Why not just pay Median or Despia to wrap it?",f4a:"You can, and they are good products. Median is a subscription with tiered plugin upcharges and a managed service priced in the thousands. Despia is roughly $250 per app, one-time. Neither one fixes your privacy manifest, your Data safety form, your demo account or your account deletion endpoint — which is where most rejections actually come from. The Kit is cheaper than one Despia licence and it teaches your AI agent to do the compliance work.",
+f5q:"I can't code. Is this usable for me?",f5a:"Yes, with an AI agent. Every module ships a prompt you paste into Cursor, Claude Code, Windsurf or Lovable's agent, and the agent produces the files. The playbook is written in plain language. If you cannot run a terminal at all, the Starter tier plus the prompts still solves most rejections; the Pro starter code assumes you or your agent can run npm install.",
+f6q:"What about updates? Guidelines change.",f6a:"Lifetime updates included. Apple and Google change review rules every year — the March 2026 enforcement wave is the most recent example. When the playbook changes, you get the new version free at the same download link.",
+f7q:"How do I pay from Russia?",f7a:"Gumroad does not accept Russian cards. Use Boosty — boosty.to/vibeship — same files, priced in RUB, paid by card, СБП or YooMoney. Telegram Stars is also available on request.",
+f8q:"Can I use it for client apps?",f8a:"Pro licence: yes, use it to build and ship apps for clients. You may not resell the Kit itself. For that, take the Agency / White-label tier.",
+fin_h:"Your app is finished. The store is the only thing left.",fin_p:"Stop paying for review cycles with weeks of your life.",
+fin_b:"Get the Kit — $79",fin_b2:"Decode a rejection free",
+ft:"Not affiliated with Apple Inc. or Google LLC.",ft2:"Free Rejection Decoder"
+};
+const RU={
+nav1:"Что внутри",nav2:"Цены",nav3:"Вопросы",nav4:"Бесплатный декодер ↗",
+badge:"Март 2026: Apple начала блокировать ИИ-приложения. Ревью ужесточилось.",
+h1a:"Приложение ты свайбкодил.",h1b:"Теперь пройди ревью.",
+lead:"ИИ-инструменты собирают продукт за один вечер и замолкают ровно там, где деньги: на ревью App Store и Google Play. VibeShip Kit — это недостающий последний километр: плейбук по отказам, нативный стартер, соответствующий требованиям сторов, юридические страницы, которые сторы требуют обязательно, и промпты, по которым ваш агент сделает всю настройку.",
+cta1:"Забрать Kit",cta2:"Попробовать бесплатный декодер отказов",
+micro:"Разовый платёж · Обновления навсегда · Возврат 14 дней без вопросов",
+s1:"шаблонов отказов расшифровано",s2:"стора: Apple + Google",s3:"оба языка в комплекте",s4:"подписки. Платите один раз.",
+p_h:"Стена, о которой никто не предупреждает",
+p_sub:"Каждый ИИ-билдер продаёт одну и ту же мечту: от промпта до продукта за 20 минут. Никто не говорит, что будет дальше. Ревью стора — это место, где ИИ-приложения умирают, а каждый отказ стоит от 2 до 7 дней.",
+p1h:"Ваше приложение — «просто сайт»",p1t:"Пункт 4.2. WebView, направленный на URL без нативных возможностей, — это web clip. Отказ номер один для сборок из Lovable, Bolt, Replit и Cursor.",
+p2h:"Apple закрутила гайки",p2t:"В марте 2026 Apple заблокировала обновления в App Store для приложений, собранных на Replit и Vibecode, по пункту 2.5.2. Об этом писали Forbes, MacRumors, AppleInsider. Ревьюеры теперь знают, как выглядит ИИ-сборка.",
+p3h:"Скучные части никто не сгенерировал",p3t:"Privacy manifest, удаление аккаунта, декларация шифрования, форма Data safety, демо-аккаунт, StoreKit вместо Stripe. Ни один промпт этого не даёт. И каждый пункт — жёсткий блокер.",
+p4h:"У Google календарная стена",p4t:"Личным аккаунтам разработчиков, созданным после 13 ноября 2023, нужны 12 реальных тестировщиков в течение 14 дней подряд до выхода в продакшн. Деньгами это не обходится. Можно только раньше запустить отсчёт.",
+p5h:"Авторизация ломается внутри оболочки",p5t:"Сессии Supabase, Clerk, Auth0 и Cognito полагаются на http-origin и cookie. Экспорт Capacitor отдаёт локальные ассеты. Итог: бесконечный цикл входа, сломанный OAuth-редирект, молча падающий Sign in with Apple.",
+p6h:"Обёртки стоят денег навсегда",p6t:"Median — подписка с платными ярусами плагинов. Despia — около $250 за приложение. Агентства берут $500–2000 за публикацию. Kit стоит один раз, и код принадлежит вам.",
+q_h:"Сколько реально стоит отказ",
+q_sub:"Три круга ревью — норма для первой отправки. Это 2–4 недели между «приложение готово» и «приложение зарабатывает».",
+q1:"«Отказали по 4.2 дважды, потом по 2.1, потому что они не смогли войти, потом ITMS-91053 на третьей загрузке. Шесть недель и $99 за аккаунт разработчика до того, как приложение вышло.»",
+q1a:"— типичный новичок в ИИ-разработке, r/vibecoding",
+q2:"«Apple заблокировала обновления приложений, собранных на Replit и Vibecode. Если ваше приложение рендерит сгенерированный ИИ контент во встроенном WebView, вы теперь вопрос политики, а не техники.»",
+q2a:"— Forbes, MacRumors и AppleInsider, март 2026",
+m1n:"2–7 дней",m1h:"на круг ревью",m1t:"Apple в среднем 24–48 часов, Google 2–7 дней. Умножьте на три круга.",
+m2n:"$99 + $25",m2h:"уже потрачено",m2t:"Apple Developer Program раз в год, Google Play разово. Ушло до первого рубля выручки.",
+m3n:"14 дней",m3h:"минимум ожидания в Google",m3t:"Закрытое тестирование с 12 тестировщиками. Отсчёт начинается, когда они согласились, а не когда вы начали.",
+c_h:"Что внутри Kit",
+c_sub:"Шесть модулей. Каждый — это то, что блокирует ваш релиз, и каждый выдан в виде готовых файлов, а не теории.",
+c1h:"Плейбук по отказам",c1t:"Каждый отказ App Store и Google Play, который реально получает ИИ-приложение: настоящий пункт правил за размытой формулировкой, что именно увидел ревьюер, минимальное исправление, какие файлы менять и готовый ответ в Resolution Centre. Сделано так, чтобы вы вставили текст отказа и получили ответ.",
+c2h:"Capacitor-стартер, соответствующий стору",c2t:"Продуктивная нативная оболочка, намеренно собранная так, чтобы пережить пункт 4.2: локальные ассеты с каналом удалённых обновлений и офлайн-фолбэком, правильные схемы iOS/Android, чтобы ваша авторизация Supabase/Clerk реально работала, заполненный PrivacyInfo.xcprivacy, декларация шифрования, push, Sign in with Apple, вход по биометрии, экран удаления аккаунта, deep links. Указываете свой URL — и оно собирается.",
+c3h:"Пакет соответствия",c3t:"Шаблон политики конфиденциальности (EN + RU), соответствующий ожиданиям сторов, рабочая веб-страница удаления аккаунта со спецификацией бэкенд-эндпоинта, условия использования, EULA для приложений с пользовательским контентом и готовый лист ответов для формы Google Play Data safety и этикетки App Privacy от Apple.",
+c4h:"Тексты для стора, которые проходят",c4t:"Правила для названия, подзаголовка, описания и ключевых слов в обоих сторах, с вычищенными формулировками, которые вызывают 2.3.7 и нарушения политики метаданных Google. Плюс текст демо-аккаунта и тестовых инструкций, закрывающий большинство отказов 2.1 одним ответом.",
+c5h:"Набор промптов для ИИ-агента",c5t:"26 проверенных промптов, по одному на каждый отказ, заточенных под Cursor, Claude Code, Windsurf и агент Lovable. Вставляете промпт в агент — он выдаёт диффы, plist-файлы, gradle и тексты для стора. Это Kit делает работу за вас, а не учит вас её делать.",
+c6h:"Ранчбук запуска",c6t:"План на 21 день с датами: что сделать в первый день, чтобы 14-дневный отсчёт тестировщиков Google шёл, пока вы разрабатываете; предрелизный аудит; чек-лист ассетов с точными размерами в пикселях; шаблон лога отказов, чтобы не повторять одну ошибку дважды.",
+pr_h:"Цены",pr_sub:"Один платёж. Без подписки, без лицензии за приложение, без платных ярусов плагинов. Обновления включены навсегда.",
+t1n:"Starter",t1p:"разово · EN + RU",t1f1:"Плейбук по отказам (26 случаев)",t1f2:"Набор промптов для ИИ-агента",t1f3:"Правила текстов для стора",t1f4:"Ранчбук запуска на 21 день",t1f5:"Код Capacitor-стартера",t1f6:"Пакет соответствия и юридические шаблоны",t1b:"Купить Starter",
+rib:"выгоднее всего",t2n:"Pro Kit",t2p:"цена запуска · разово · EN + RU",t2f1:"Всё из Starter",t2f2:"Capacitor-стартер, соответствующий стору (полный исходник)",t2f3:"Пакет соответствия: политика конфиденциальности EN + RU",t2f4:"Страница удаления аккаунта + спецификация бэкенда",t2f5:"Лист ответов Data safety / App Privacy",t2f6:"Пожизненные обновления под новые правила",t2b:"Забрать Pro Kit",
+t3n:"Агентство / White-label",t3p:"разово · перепродавайте клиентам",t3f1:"Всё из Pro",t3f2:"White-label права: ваш бренд на Kit",t3f3:"Неограниченно клиентских приложений",t3f4:"Шаблоны ответов на отказы для клиентов",t3f5:"Декодер с вашим брендом для вашей воронки",t3f6:"Приоритетный канал поддержки",t3b:"Запросить доступ",
+g_h:"Возврат 14 дней без допроса",
+g_t:"Если Kit не сэкономил вам хотя бы один круг ревью — напишите, верну деньги. Гарантировать одобрение я не могу: ревью делают живые люди. Но плейбук здесь ровно тот, которым публикуют.",
+ru_pay:"🇷🇺 Оплата из России: в рублях на Boosty — boosty.to/vibeship (тот же контент, 4 900 ₽ за Pro).",
+f_h:"Вопросы",f_sub:"Те, что важны до оплаты.",
+f1q:"Это гарантирует одобрение моего приложения?",f1a:"Нет, и любой, кто это обещает, вам врёт. Ревью делают люди, и у них есть право на усмотрение. Kit убирает примерно 90% отказов, которые предсказуемы и механичны: нет нативных функций, нет демо-аккаунта, нет privacy manifest, нет удаления аккаунта, неверный платёжный провайдер, неверные ответы в Data safety.",
+f2q:"Я собрал приложение в Lovable / Bolt / Replit / Base44. Подойдёт?",f2a:"Да, это ровно та аудитория. Lovable экспортирует Capacitor-проект, Bolt и Replit дают веб-сборку, которую можно обернуть, а Base44/v0 выдают обычное веб-приложение. Стартер работает с любой веб-сборкой: Next.js, Vite, React, Vue, чистый HTML.",
+f3q:"Нужен ли Mac?",f3a:"Для iOS-сборки да — Xcode работает только на macOS. Варианты: б/у Mac mini, Mac в облаке (MacStadium, AWS EC2 Mac, Scaleway) или Mac друга на два часа. Для Android такого требования нет. Если Mac совсем нет — начинайте с Google Play, iOS выпустите позже.",
+f4q:"Почему не заплатить Median или Despia за обёртку?",f4a:"Можно, это хорошие продукты. Median — подписка с платными ярусами плагинов и managed-сервисом за тысячи долларов. Despia — примерно $250 за приложение разово. Но ни один из них не чинит ваш privacy manifest, форму Data safety, демо-аккаунт и эндпоинт удаления аккаунта — а именно оттуда приходит большинство отказов. Kit дешевле одной лицензии Despia и учит вашего ИИ-агента делать работу по соответствию.",
+f5q:"Я не умею программировать. Мне это подходит?",f5a:"Да, вместе с ИИ-агентом. К каждому модулю идёт промпт, который вы вставляете в Cursor, Claude Code, Windsurf или агент Lovable, и агент создаёт файлы. Плейбук написан простым языком. Если терминал вам совсем недоступен, тариф Starter плюс промпты закроют большинство отказов; стартер из Pro предполагает, что вы или ваш агент можете выполнить npm install.",
+f6q:"А обновления? Правила же меняются.",f6a:"Пожизненные обновления включены. Apple и Google меняют правила ревью каждый год — волна правоприменения марта 2026 самый свежий пример. Когда плейбук меняется, вы получаете новую версию бесплатно по той же ссылке.",
+f7q:"Как оплатить из России?",f7a:"Gumroad не принимает российские карты. Используйте Boosty — boosty.to/vibeship: те же файлы, цена в рублях, оплата картой, СБП или YooMoney. Telegram Stars — по запросу.",
+f8q:"Можно использовать для клиентских приложений?",f8a:"По лицензии Pro — да, собирайте и публикуйте приложения для клиентов. Перепродавать сам Kit нельзя. Для этого есть тариф Agency / White-label.",
+fin_h:"Приложение готово. Остался только стор.",fin_p:"Хватит платить за круги ревью неделями своей жизни.",
+fin_b:"Забрать Kit — $79",fin_b2:"Расшифровать отказ бесплатно",
+ft:"Не аффилировано с Apple Inc. и Google LLC.",ft2:"Бесплатный декодер отказов"
+};
+
+let LANG='en';
+function apply(){
+  const D = LANG==='en'?EN:RU;
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(D[k]!==undefined) el.innerHTML=D[k];
+  });
+  document.getElementById('l-en').classList.toggle('on',LANG==='en');
+  document.getElementById('l-ru').classList.toggle('on',LANG==='ru');
+}
+function setLang(l){LANG=l;apply();}
+apply();
+</script>
+</body>
+</html>

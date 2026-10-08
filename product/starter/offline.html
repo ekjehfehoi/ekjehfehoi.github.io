@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Offline</title>
+<!--
+  VibeShip Kit — offline fallback screen.
+  Referenced by capacitor.config.ts -> server.errorPath.
+
+  WHY THIS FILE EXISTS
+  Reviewers test in airplane mode and on bad hotel Wi-Fi. If your app shows a
+  white screen or a browser error page, you get rejected under Guideline 2.1
+  ("we encountered a bug / the app did not load") and it feeds the Guideline
+  4.2 judgement that your app is just a website.
+
+  This page must be self-contained: no external fonts, no CDN, no network
+  requests, no images from your server. Everything inline.
+-->
+<style>
+  :root{color-scheme:dark light}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    background:#08090c;color:#eaeff5;
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;align-items:center;justify-content:center;
+    padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+  }
+  .box{max-width:380px;text-align:center}
+  .icon{width:64px;height:64px;margin:0 auto 22px;border-radius:18px;
+    background:linear-gradient(135deg,rgba(110,231,168,.18),rgba(124,196,255,.16));
+    border:1px solid rgba(110,231,168,.28);display:flex;align-items:center;justify-content:center}
+  .icon svg{width:30px;height:30px;stroke:#6ee7a8;fill:none;stroke-width:1.8;stroke-linecap:round}
+  h1{font-size:21px;letter-spacing:-.01em;margin:0 0 10px;font-weight:700}
+  p{margin:0 0 8px;color:#8b98a9;font-size:15px}
+  button{
+    margin-top:22px;width:100%;padding:15px;border-radius:12px;border:0;
+    background:linear-gradient(135deg,#6ee7a8,#4ed39a);color:#06110b;
+    font-weight:800;font-size:16px;cursor:pointer;
+  }
+  button:active{transform:scale(.985)}
+  button.secondary{background:#151a22;color:#eaeff5;border:1px solid #222a35;margin-top:10px;font-weight:600}
+  .status{margin-top:20px;font-size:12.5px;color:#5d6a7a;min-height:18px}
+  .on{color:#6ee7a8}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">
+    <svg viewBox="0 0 24 24"><path d="M2 8.5a5.5 5.5 0 0 1 5.5-5.5h9A5.5 5.5 0 0 1 22 8.5v0a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 8.5z"/><path d="m6 18 12-12"/></svg>
+  </div>
+  <h1 id="t">You're offline</h1>
+  <p id="s">Your data is still on this device. Content you loaded before will keep working.</p>
+  <p id="s2" style="color:#5d6a7a;font-size:13.5px">Reconnect to sync new items.</p>
+  <button id="retry" onclick="retry()">Try again</button>
+  <button class="secondary" onclick="goHome()">Open cached content</button>
+  <div class="status" id="status"></div>
+</div>
+<script>
+var RU = navigator.language && navigator.language.toLowerCase().indexOf('ru') === 0;
+if (RU) {
+  document.documentElement.lang = 'ru';
+  document.getElementById('t').textContent = 'Нет соединения';
+  document.getElementById('s').textContent = 'Ваши данные остались на устройстве. Загруженное ранее продолжает работать.';
+  document.getElementById('s2').textContent = 'Подключитесь к сети, чтобы синхронизировать новое.';
+  document.getElementById('retry').textContent = 'Повторить';
+  document.querySelector('.secondary').textContent = 'Открыть сохранённое';
+}
+
+var statusEl = document.getElementById('status');
+
+function setOnlineState() {
+  if (navigator.onLine) {
+    statusEl.innerHTML = '<span class="on">● ' + (RU ? 'соединение восстановлено' : 'connection restored') + '</span>';
+    setTimeout(function(){ location.reload(); }, 700);
+  } else {
+    statusEl.textContent = RU ? '● сеть не найдена' : '● no network';
+  }
+}
+
+function retry() {
+  statusEl.textContent = RU ? 'проверка соединения…' : 'checking connection…';
+  // Probe your own origin. Change the path to a real lightweight endpoint.
+  fetch(location.origin + '/healthz', { cache: 'no-store', mode: 'no-cors' })
+    .then(setOnlineState)
+    .catch(setOnlineState);
+}
+
+// Auto-recover the moment the OS reports connectivity again.
+window.addEventListener('online', function(){
+  statusEl.innerHTML = '<span class="on">● ' + (RU ? 'соединение восстановлено' : 'connection restored') + '</span>';
+  setTimeout(function(){ location.reload(); }, 500);
+});
+
+function goHome() {
+  // Send the user to the cached shell instead of leaving them stuck.
+  location.href = 'index.html';
+}
+
+setOnlineState();
+</script>
+</body>
+</html>

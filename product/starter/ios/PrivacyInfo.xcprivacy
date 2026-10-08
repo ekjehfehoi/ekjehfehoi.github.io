@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  VibeShip Kit — PrivacyInfo.xcprivacy (Apple privacy manifest)
+
+  WHY THIS FILE EXISTS
+  Since spring 2024 Apple requires apps to declare which "required reason"
+  APIs they use and why. Missing declarations produce an ITMS-91053 email
+  that BLOCKS your upload entirely — it is not a review rejection you can
+  argue with, there is no appeal path, you just cannot submit.
+
+  No AI code generator produces this file. It is one of the most common
+  "why can't I select my build" mysteries for first-time submitters.
+
+  HOW TO USE
+  1. Drop this file into ios/App/App/ (same folder as Info.plist).
+  2. In Xcode: target "App" -> Build Phases -> Copy Bundle Resources.
+     Confirm PrivacyInfo.xcprivacy is listed. If not, drag it in.
+  3. Delete any NSPrivacyAccessedAPICategory block below that does not
+     apply to you. Over-declaring is a minor annoyance; under-declaring
+     blocks your upload.
+  4. Build an archive, then open Xcode -> Window -> Organizer -> your
+     archive -> "Generate Privacy Report". It shows every API and which
+     SDK contributed it. Compare against this file. Fix mismatches.
+  5. Re-check this file after EVERY dependency update. A new SDK silently
+     adds required-reason API usage.
+
+  WHAT THE REASON CODES MEAN
+  File timestamp:
+    C617.1  - displayed to the user inside the app
+    DDA9.1  - accessed only from inside the app container / cloud container
+    3B52.1  - used to measure elapsed time between app events
+  Disk space:
+    E174.1  - displayed to the user
+    85F4.1  - check for sufficient space before writing
+  System boot time:
+    35F9.1  - measure elapsed time between app events
+  UserDefaults:
+    CA92.1  - access info in the same app's own defaults suite
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <!-- ============================================================
+       TRACKING
+       Set to true ONLY if you track users across other companies'
+       apps/websites for advertising. If false, NSPrivacyTrackingDomains
+       must be empty. A wrong "true" here creates an ATT prompt you
+       then have to justify; a wrong "false" is a policy problem.
+       Most AI-built apps: false.
+       ============================================================ -->
+  <key>NSPrivacyTracking</key>
+  <false/>
+
+  <key>NSPrivacyTrackingDomains</key>
+  <array/>
+
+  <!-- ============================================================
+       DATA COLLECTED BY THIS APP
+       Must match your App Store Connect "App Privacy" label exactly.
+       A mismatch is a separate rejection. Delete what you don't collect.
+
+       NSPrivacyCollectedType keys are Apple's fixed identifiers —
+       do not invent your own. Common ones for an AI-built app:
+         NSPrivacyCollectedTypeEmailAddress
+         NSPrivacyCollectedTypeName
+         NSPrivacyCollectedTypePhoneNumber
+         NSPrivacyCollectedTypeDeviceID
+         NSPrivacyCollectedTypeProductInteraction
+         NSPrivacyCollectedTypeOtherDiagnosticData
+         NSPrivacyCollectedTypeCrashData
+         NSPrivacyCollectedTypePerformanceData
+         NSPrivacyCollectedTypePreciseLocation
+         NSPrivacyCollectedTypeCoarseLocation
+         NSPrivacyCollectedTypePhotosorVideos
+         NSPrivacyCollectedTypeOtherDataTypes
+       ============================================================ -->
+  <key>NSPrivacyCollectedTypes</key>
+  <array>
+
+    <!-- Email address: collected, linked to the user, used for app functionality -->
+    <dict>
+      <key>NSPrivacyCollectedType</key>
+      <string>NSPrivacyCollectedTypeEmailAddress</string>
+      <key>NSPrivacyCollectedTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+
+    <!-- Device ID: if you use push notifications you collect a device token.
+         Declare it. This is the single most-forgotten entry in AI-built apps. -->
+    <dict>
+      <key>NSPrivacyCollectedType</key>
+      <string>NSPrivacyCollectedTypeDeviceID</string>
+      <key>NSPrivacyCollectedTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+
+    <!-- Product interaction: analytics events. Delete if you have no analytics. -->
+    <dict>
+      <key>NSPrivacyCollectedType</key>
+      <string>NSPrivacyCollectedTypeProductInteraction</string>
+      <key>NSPrivacyCollectedTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedTypePurposeAppFunctionality</string>
+        <string>NSPrivacyCollectedTypePurposeAnalytics</string>
+      </array>
+    </dict>
+
+    <!-- Crash data: delete if you use no crash reporting (Sentry/Crashlytics). -->
+    <dict>
+      <key>NSPrivacyCollectedType</key>
+      <string>NSPrivacyCollectedTypeCrashData</string>
+      <key>NSPrivacyCollectedTypeLinked</key>
+      <false/>
+      <key>NSPrivacyCollectedTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+
+  </array>
+
+  <!-- ============================================================
+       REQUIRED REASON APIs
+       These are the APIs Apple gates. Capacitor itself and most
+       common plugins touch UserDefaults, file timestamps and disk
+       space, so these four categories cover the majority of
+       Capacitor apps. Verify against the Xcode Privacy Report.
+       ============================================================ -->
+  <key>NSPrivacyAccessedAPITypes</key>
+  <array>
+
+    <!-- File timestamps -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>C617.1</string>
+        <string>DDA9.1</string>
+      </array>
+    </dict>
+
+    <!-- Disk space -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>E174.1</string>
+        <string>85F4.1</string>
+      </array>
+    </dict>
+
+    <!-- System boot time -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>35F9.1</string>
+      </array>
+    </dict>
+
+    <!-- UserDefaults -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <string>CA92.1</string>
+      </array>
+    </dict>
+
+  </array>
+
+</dict>
+</plist>

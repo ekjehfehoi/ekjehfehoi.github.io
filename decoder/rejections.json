@@ -1,0 +1,1292 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "updated": "2026-10-08",
+    "sources": [
+      "Apple App Store Review Guidelines (4.2, 2.5.2, 2.1, 5.1.1, 5.1.2, 3.1.1, 2.3.x, 4.3, 1.2, 2.5.4)",
+      "Apple developer forums + Apple enforcement wave March 2026 (Forbes 21.03.2026, MacRumors 18.03.2026, AppleInsider 18.03.2026)",
+      "Google Play User Data / Account Deletion policy",
+      "Google Play Data safety form requirements",
+      "Google Play personal developer account testing requirement (12 testers / 14 days)",
+      "Google Play target API level policy",
+      "Capacitor v7/v8 config schema (server.url, androidScheme, errorPath, plugins)"
+    ],
+    "disclaimer": {
+      "en": "This decoder explains common rejection patterns and how to fix them. It is not legal advice and does not guarantee approval. App Review is a human process.",
+      "ru": "Декодер объясняет типовые причины отказов и способы их устранения. Это не юридическая консультация и не гарантия одобрения. Ревью делают живые люди."
+    }
+  },
+  "entries": [
+    {
+      "id": "apple-4-2-minimum-functionality",
+      "platform": "apple",
+      "guideline": "4.2",
+      "name": { "en": "Minimum Functionality", "ru": "Минимальная функциональность" },
+      "code": "4.2",
+      "match": [
+        "4.2 Minimum Functionality",
+        "Guideline 4.2",
+        "minimum functionality requirement",
+        "not enough useful features",
+        "app is essentially a website",
+        "web clip",
+        "does not include any native functionality",
+        "bundle of web content"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "The single most common rejection for AI-built apps. Your binary is a WebView pointed at a URL with no native capability, so Apple classifies it as a 'web clip' / repackaged website. This is not about code quality — it is about architecture: the app must do something a browser tab cannot.",
+        "ru": "Самый частый отказ для приложений, собранных ИИ. Ваш билд — это WebView, направленный на URL, без нативных возможностей, поэтому Apple классифицирует его как «web clip» / переупакованный сайт. Дело не в качестве кода, а в архитектуре: приложение должно уметь то, что не умеет вкладка браузера."
+      },
+      "fix": {
+        "en": [
+          "Add at least 2-3 real native capabilities and USE them in the core flow: push notifications, biometric unlock (Face ID/Touch ID), camera/QR, haptics, offline mode, share sheet, widgets.",
+          "Bundle your web assets into the app instead of loading a remote URL only. Keep the remote URL as a fast-update path with a bundled fallback.",
+          "Add an offline fallback screen (Capacitor: server.errorPath) so the app is usable in airplane mode. Reviewers test this.",
+          "Implement native navigation behaviour: swipe-back, pull-to-refresh, status bar theming, safe-area insets.",
+          "Add an App Extension (Share Extension or Widget) — this alone moves you out of 'web clip' territory.",
+          "Write App Review notes that explicitly list the native features and where to find them."
+        ],
+        "ru": [
+          "Добавьте минимум 2-3 настоящие нативные функции и используйте их в основном сценарии: push-уведомления, вход по Face ID/Touch ID, камера/QR, тактильный отклик, офлайн-режим, share sheet, виджеты.",
+          "Вшейте веб-ассеты в приложение, а не грузите только удалённый URL. Оставьте удалённый URL как канал быстрых обновлений с локальным фолбэком.",
+          "Сделайте офлайн-экран (в Capacitor: server.errorPath), чтобы приложением можно было пользоваться в авиарежиме. Ревьюеры это проверяют.",
+          "Реализуйте нативное поведение навигации: свайп назад, pull-to-refresh, тема статус-бара, safe-area отступы.",
+          "Добавьте App Extension (Share Extension или виджет) — только это уже выводит вас из категории «web clip».",
+          "В заметках для App Review явно перечислите нативные функции и где их найти."
+        ]
+      },
+      "files": [
+        "capacitor.config.ts",
+        "ios/App/App/Info.plist",
+        "www/index.html (offline fallback)",
+        "App Store Connect → App Review Information"
+      ],
+      "aiPrompt": {
+        "en": "You are a senior iOS release engineer. My app is a Capacitor 7 wrapper around a web app built with {STACK}. It was rejected under App Store Guideline 4.2 (Minimum Functionality). Produce: (1) a plan to add 3 native capabilities that are genuinely used in the core user flow, (2) the exact capacitor.config.ts changes including a bundled webDir plus a server.url update channel with server.errorPath offline fallback, (3) the native plugin list with versions, (4) an App Review notes paragraph that lists each native feature and where the reviewer finds it. Do not add features that are decorative — every native feature must be reachable from the main screen. Output diffs, not prose.",
+        "ru": "Ты — ведущий iOS-инженер по релизам. Моё приложение — это Capacitor 7 обёртка над веб-приложением на {STACK}. Его отклонили по правилу App Store 4.2 (Minimum Functionality). Подготовь: (1) план добавления 3 нативных возможностей, которые реально используются в основном сценарии, (2) точные изменения capacitor.config.ts с локальным webDir плюс каналом обновлений через server.url и офлайн-фолбэком server.errorPath, (3) список нативных плагинов с версиями, (4) абзац для App Review с перечислением каждой нативной функции и где её найти ревьюеру. Не добавляй декоративные функции — каждая должна быть доступна с главного экрана. Выводи диффы, а не рассуждения."
+      },
+      "kit": "playbook/01-apple-4.2.md"
+    },
+    {
+      "id": "apple-2-5-2-remote-code",
+      "platform": "apple",
+      "guideline": "2.5.2",
+      "name": { "en": "Downloading / executing remote code", "ru": "Загрузка и выполнение удалённого кода" },
+      "code": "2.5.2",
+      "match": [
+        "2.5.2",
+        "downloads, installs, or executes code",
+        "introduces or changes features or functionality of the app",
+        "interprets code",
+        "educational purposes",
+        "changes the behavior of the app"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "Apps may not download or execute code that changes their own functionality. This is the guideline Apple cited in the March 2026 enforcement wave, when it blocked updates for apps built with Replit and Vibecode because those apps rendered AI-generated content inside an in-app WebView. Content updates are fine; behaviour/feature updates delivered as interpreted code are not.",
+        "ru": "Приложениям запрещено загружать и выполнять код, который меняет их собственную функциональность. Именно это правило Apple применила в волне блокировок марта 2026 года, когда перестала пропускать обновления приложений, собранных на Replit и Vibecode: те рендерили сгенерированный ИИ контент во встроенном WebView. Обновлять контент можно, обновлять поведение и функции через исполняемый код — нельзя."
+      },
+      "fix": {
+        "en": [
+          "Ship a bundled build as the primary content source (webDir), and treat remote loading as a content/CDN update only.",
+          "Never expose an in-app UI that lets users generate, edit or run code, prompts or scripts inside your app.",
+          "If your product IS a code/prompt tool, remove the Apple-platform generation feature from the mobile binary and keep it on the web. Apple required exactly this of Vibecode.",
+          "Open external/user-generated links with the system browser (Capacitor Browser plugin / SFSafariViewController), never in an in-app WebView that changes app behaviour.",
+          "In App Review notes, state clearly: 'All code in this binary is compiled and reviewed. Remote content is limited to text, images and app data; no code is downloaded or executed.'"
+        ],
+        "ru": [
+          "Сделайте основной источник контента локальным (webDir), а удалённую загрузку — только обновлением контента/CDN.",
+          "Не показывайте в приложении интерфейс, где пользователь может генерировать, редактировать или запускать код, промпты или скрипты.",
+          "Если ваш продукт — это и есть инструмент для кода/промптов, уберите из мобильного билда возможность генерации под Apple-платформы и оставьте её в вебе. Именно этого Apple потребовала от Vibecode.",
+          "Внешние и пользовательские ссылки открывайте в системном браузере (Capacitor Browser / SFSafariViewController), а не во встроенном WebView, который меняет поведение приложения.",
+          "В заметках для App Review напишите прямо: «Весь код в этом билде скомпилирован и прошёл ревью. Удалённо загружаются только текст, изображения и данные приложения; код не загружается и не исполняется.»"
+        ]
+      },
+      "files": [
+        "capacitor.config.ts",
+        "ios/App/App/Info.plist",
+        "App Store Connect → App Review Information",
+        "in-app link handling (openExternal)"
+      ],
+      "aiPrompt": {
+        "en": "My Capacitor app was rejected under App Store Guideline 2.5.2. Audit my project for anything that downloads or executes remote code or lets a user change app behaviour at runtime: remote script tags, eval, dynamic import from a URL, in-app WebView loading third-party pages, prompt/code generation UI, hot-update mechanisms. List every occurrence with file and line, classify each as 'content update (safe)' or 'code execution (violation)', and give me the diff that converts the violations into safe patterns. Then write the App Review note paragraph that states our compliance in Apple's own vocabulary.",
+        "ru": "Моё Capacitor-приложение отклонили по правилу 2.5.2. Проведи аудит проекта на всё, что загружает или исполняет удалённый код либо позволяет пользователю менять поведение приложения в рантайме: удалённые script-теги, eval, dynamic import по URL, встроенный WebView со сторонними страницами, UI генерации промптов/кода, механизмы хот-апдейтов. Перечисли все места с файлом и строкой, классифицируй каждое как «обновление контента (безопасно)» или «исполнение кода (нарушение)» и дай диффы, переводящие нарушения в безопасные паттерны. Затем напиши абзац для App Review в терминологии Apple."
+      },
+      "kit": "playbook/02-apple-2.5.2.md"
+    },
+    {
+      "id": "apple-2-1-demo-account",
+      "platform": "apple",
+      "guideline": "2.1",
+      "name": { "en": "Demo account / information needed", "ru": "Демо-аккаунт / нужна информация" },
+      "code": "2.1",
+      "match": [
+        "2.1",
+        "demo account",
+        "sign in required",
+        "we need a demo",
+        "App Review was not able to",
+        "provide us with a demo",
+        "could not sign in",
+        "authentication credentials"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Your app has a login and the reviewer could not get past it. AI-built apps fail here constantly because the auth flow depends on cookies/OAuth redirects that break inside a WebView, or because nobody created a working demo account.",
+        "ru": "В приложении есть вход, и ревьюер не смог через него пройти. Приложения, собранные ИИ, проваливаются здесь постоянно: флоу авторизации зависит от cookie/OAuth-редиректов, которые ломаются внутри WebView, либо никто просто не завёл рабочий демо-аккаунт."
+      },
+      "fix": {
+        "en": [
+          "Create a permanent demo account pre-filled with realistic data. An empty account looks broken and gets rejected separately.",
+          "Put username + password in App Store Connect → App Information → App Review Information, and enable 'Sign-in required'.",
+          "Verify the demo account works in the exact submitted build, not in your dev environment.",
+          "Whitelist the reviewer's flow: make sure email verification is either disabled for the demo user or the code is provided in the notes.",
+          "If you use OAuth/Google/Apple sign-in, ALSO provide an email+password path for review, or the reviewer has no way in.",
+          "Attach a short screen recording URL (unlisted YouTube/Vimeo/Loom) showing the full happy path. This single item resolves most 2.1 rejections."
+        ],
+        "ru": [
+          "Создайте постоянный демо-аккаунт, заранее наполненный реалистичными данными. Пустой аккаунт выглядит сломанным и получает отдельный отказ.",
+          "Внесите логин и пароль в App Store Connect → App Information → App Review Information и включите «Sign-in required».",
+          "Проверьте, что демо-аккаунт работает именно в отправленном билде, а не в вашем dev-окружении.",
+          "Продумайте путь ревьюера: либо отключите подтверждение email для демо-пользователя, либо укажите код в заметках.",
+          "Если у вас OAuth/Google/Apple-вход, ОБЯЗАТЕЛЬНО добавьте вход по email+паролю для ревью — иначе ревьюеру не зайти.",
+          "Приложите ссылку на короткую запись экрана (unlisted YouTube/Vimeo/Loom) с полным сценарием. Этот один пункт закрывает большинство отказов 2.1."
+        ]
+      },
+      "files": [
+        "App Store Connect → App Review Information",
+        "backend: seed demo user",
+        "auth flow (email+password fallback)"
+      ],
+      "aiPrompt": {
+        "en": "My app was rejected under Guideline 2.1 because App Review could not sign in. My stack is {STACK} with {AUTH_PROVIDER}. Give me: (1) a seed script that creates a demo user with 30 days of realistic data, (2) the code change to bypass email verification for that user only, (3) an email+password sign-in fallback if my app currently only supports OAuth, (4) the exact text to paste into App Review Information including demo credentials and a step-by-step reviewer walkthrough, (5) a 60-second screen-recording script covering the happy path.",
+        "ru": "Моё приложение отклонили по правилу 2.1: App Review не смог войти. Мой стек — {STACK}, авторизация — {AUTH_PROVIDER}. Дай мне: (1) скрипт создания демо-пользователя с 30 днями реалистичных данных, (2) изменение кода, отключающее подтверждение email только для этого пользователя, (3) вход по email+паролю как фолбэк, если сейчас только OAuth, (4) готовый текст для App Review Information с демо-данными и пошаговым сценарием для ревьюера, (5) сценарий 60-секундной записи экрана основного сценария."
+      },
+      "kit": "playbook/03-apple-2.1.md"
+    },
+    {
+      "id": "apple-5-1-1-data-collection",
+      "platform": "apple",
+      "guideline": "5.1.1",
+      "name": { "en": "Data Collection and Storage", "ru": "Сбор и хранение данных" },
+      "code": "5.1.1",
+      "match": [
+        "5.1.1",
+        "consent",
+        "collect personal data",
+        "data collection",
+        "purpose string",
+        "NSUserTrackingUsageDescription",
+        "privacy policy"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "The app collects data without a clear consent moment, missing usage-description strings, or without a reachable privacy policy. AI-generated apps frequently request permissions they never use, and every unused permission is a rejection.",
+        "ru": "Приложение собирает данные без явного момента согласия, без обязательных строк-описаний или без доступной политики конфиденциальности. Сгенерированные ИИ приложения часто запрашивают разрешения, которые не используют, — а каждое лишнее разрешение это отказ."
+      },
+      "fix": {
+        "en": [
+          "Remove every Info.plist usage description for a permission the app does not actually use.",
+          "For each remaining permission, write a specific purpose string that names the feature: 'Used to scan QR codes at the checkout screen.'",
+          "Add a privacy policy link in App Store Connect AND inside the app (Settings screen).",
+          "Add a first-run consent screen before any tracking, analytics or data collection begins.",
+          "If you use ATT/tracking, add NSUserTrackingUsageDescription and call the ATT prompt before any ad/tracking SDK initialises.",
+          "Fill the App Privacy 'nutrition label' consistently with what the binary actually does — mismatches trigger separate rejections."
+        ],
+        "ru": [
+          "Удалите из Info.plist все строки-описания для разрешений, которые приложение реально не использует.",
+          "Для каждого оставшегося разрешения напишите конкретную строку с указанием функции: «Используется для сканирования QR-кодов на экране оплаты».",
+          "Добавьте ссылку на политику конфиденциальности в App Store Connect И внутрь приложения (экран настроек).",
+          "Добавьте экран согласия при первом запуске — до начала любой аналитики, трекинга или сбора данных.",
+          "Если используете ATT/трекинг, добавьте NSUserTrackingUsageDescription и вызывайте запрос ATT до инициализации любого рекламного/трекинг-SDK.",
+          "Заполняйте «этикетку конфиденциальности» (App Privacy) в соответствии с реальным поведением билда — расхождения дают отдельный отказ."
+        ]
+      },
+      "files": [
+        "ios/App/App/Info.plist",
+        "App Store Connect → App Privacy",
+        "in-app Settings screen",
+        "privacy policy URL"
+      ],
+      "aiPrompt": {
+        "en": "Audit my iOS Info.plist and Capacitor plugin list against App Store Guideline 5.1.1. My app is {APP_DESCRIPTION}. Produce a table: permission | plugin that requires it | is it actually used in the UI? | verdict (keep/remove) | proposed purpose string in English. Then output the cleaned Info.plist fragment and a first-run consent screen implementation for my stack {STACK}. Flag any mismatch between what the binary does and a typical App Privacy declaration.",
+        "ru": "Проведи аудит моего Info.plist и списка Capacitor-плагинов на соответствие правилу 5.1.1. Моё приложение: {APP_DESCRIPTION}. Сделай таблицу: разрешение | какой плагин его требует | используется ли оно реально в UI | вердикт (оставить/удалить) | предлагаемая строка-описание на английском. Затем выведи очищенный фрагмент Info.plist и реализацию экрана согласия при первом запуске для моего стека {STACK}. Отметь любые расхождения между поведением билда и типичной декларацией App Privacy."
+      },
+      "kit": "playbook/04-apple-5.1.1.md"
+    },
+    {
+      "id": "apple-5-1-2-account-deletion",
+      "platform": "apple",
+      "guideline": "5.1.2",
+      "name": { "en": "No in-app account deletion", "ru": "Нет удаления аккаунта в приложении" },
+      "code": "5.1.2",
+      "match": [
+        "5.1.2",
+        "account deletion",
+        "delete their account",
+        "ability to delete",
+        "initiate account deletion"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Mandatory since 2022 and still one of the top rejection reasons for AI-built apps, because no-code/AI builders add sign-up but never add deletion. If your app supports account creation, it must support in-app account deletion — not just 'deactivate', not just a mailto link, and not only on the website.",
+        "ru": "Обязательное требование с 2022 года и до сих пор одна из главных причин отказов для ИИ-приложений: ноукод/ИИ-билдеры добавляют регистрацию, но никогда не добавляют удаление. Если в приложении есть создание аккаунта, в нём должно быть удаление аккаунта внутри приложения — не «деактивация», не просто mailto-ссылка и не только на сайте."
+      },
+      "fix": {
+        "en": [
+          "Add a visible 'Delete Account' button inside the app (Settings → Account). A mailto link alone is not sufficient.",
+          "Deletion must actually remove the account and associated data from your backend, not just sign the user out.",
+          "Add a confirmation step, and allow the user to choose between deleting data and deactivating.",
+          "Also expose a web-based deletion URL in App Store Connect (Apple asks for it) that works without the app.",
+          "Delete related data: rows in your database, auth user in Supabase/Auth0/Clerk, and files in storage buckets.",
+          "Record the deletion event with a timestamp so you can prove compliance if asked."
+        ],
+        "ru": [
+          "Добавьте видимую кнопку «Удалить аккаунт» внутри приложения (Настройки → Аккаунт). Одной mailto-ссылки недостаточно.",
+          "Удаление должно реально стирать аккаунт и связанные данные из бэкенда, а не просто разлогинивать.",
+          "Добавьте шаг подтверждения и дайте выбор: удалить данные или деактивировать аккаунт.",
+          "Также укажите в App Store Connect веб-URL для удаления аккаунта — Apple его запрашивает, и он должен работать без приложения.",
+          "Удаляйте связанные данные: записи в базе, пользователя в Supabase/Auth0/Clerk и файлы в хранилище.",
+          "Логируйте факт удаления с таймстампом, чтобы при необходимости подтвердить соответствие."
+        ]
+      },
+      "files": [
+        "in-app Settings screen",
+        "backend: DELETE /account endpoint",
+        "App Store Connect → account deletion URL",
+        "privacy policy"
+      ],
+      "aiPrompt": {
+        "en": "Implement full App Store Guideline 5.1.2 compliance for my app. Stack: {STACK}, auth: {AUTH_PROVIDER}, database: {DATABASE}. Deliver: (1) a backend endpoint that deletes the auth user, all related rows, and storage objects, with a confirmation token flow, (2) an in-app 'Delete Account' UI with a confirmation sheet and a choice between delete and deactivate, (3) a public web page at /delete-account that performs the same action by email + token, (4) the deletion audit log record, (5) the paragraph to add to my privacy policy describing deletion and retention timing.",
+        "ru": "Реализуй полное соответствие правилу App Store 5.1.2 для моего приложения. Стек: {STACK}, авторизация: {AUTH_PROVIDER}, база: {DATABASE}. Нужно: (1) бэкенд-эндпоинт, удаляющий пользователя авторизации, все связанные записи и объекты хранилища, с флоу токена подтверждения, (2) UI «Удалить аккаунт» в приложении с подтверждением и выбором между удалением и деактивацией, (3) публичная веб-страница /delete-account, делающая то же по email + токену, (4) запись в аудит-лог удаления, (5) абзац для политики конфиденциальности о удалении и сроках хранения."
+      },
+      "kit": "playbook/05-apple-5.1.2.md"
+    },
+    {
+      "id": "apple-3-1-1-iap",
+      "platform": "apple",
+      "guideline": "3.1.1",
+      "name": { "en": "In-App Purchase / payments", "ru": "In-App Purchase / платежи" },
+      "code": "3.1.1",
+      "match": [
+        "3.1.1",
+        "In-App Purchase",
+        "payment mechanism",
+        "unauthorized payment",
+        "Stripe",
+        "external purchase",
+        "unlock content",
+        "subscribe outside"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Your app sells digital content or subscriptions using Stripe/Paddle/ Lemon Squeezy inside the iOS binary. Apple requires its own In-App Purchase for anything consumed inside the app. This is the most expensive mistake AI builders make, because Lovable/Bolt/Replit happily generate a Stripe checkout that is perfectly legal on the web and instantly rejected on iOS.",
+        "ru": "Ваше приложение продаёт цифровой контент или подписки через Stripe/Paddle/Lemon Squeezy внутри iOS-билда. Apple требует использовать собственный In-App Purchase для всего, что потребляется внутри приложения. Это самая дорогая ошибка ИИ-билдеров: Lovable/Bolt/Replit охотно генерируют Stripe-checkout, который абсолютно легален в вебе и мгновенно отклоняется на iOS."
+      },
+      "fix": {
+        "en": [
+          "Move digital goods/subscriptions to StoreKit In-App Purchase on iOS. Keep Stripe only for physical goods, real-world services, or purchases consumed outside the app.",
+          "Never show external prices, 'Buy on our website' buttons, or links to checkout inside the iOS binary.",
+          "Remove any button that points to an external payment page. Even a plain link to your pricing page can trigger this.",
+          "Implement server-side receipt validation so entitlements survive reinstall.",
+          "Restore Purchases button is mandatory for non-consumables and auto-renewable subscriptions.",
+          "If you need web checkout for business reasons, gate the feature behind a server flag so the iOS build never renders it."
+        ],
+        "ru": [
+          "Переведите цифровые товары и подписки на StoreKit In-App Purchase в iOS. Stripe оставляйте только для физических товаров, услуг в реальном мире или покупок, потребляемых вне приложения.",
+          "Не показывайте в iOS-билде внешние цены, кнопки «Купить на сайте» и ссылки на оплату.",
+          "Уберите любую кнопку, ведущую на внешнюю страницу оплаты. Даже простая ссылка на страницу с ценами может стать причиной отказа.",
+          "Реализуйте серверную валидацию чеков, чтобы доступы переживали переустановку.",
+          "Кнопка «Восстановить покупки» обязательна для непотребляемых товаров и автовозобновляемых подписок.",
+          "Если веб-оплата нужна по бизнес-причинам, спрячьте эту функцию за серверным флагом, чтобы iOS-билд её никогда не рендерил."
+        ]
+      },
+      "files": [
+        "in-app pricing / checkout screens",
+        "StoreKit configuration",
+        "backend receipt validation",
+        "App Store Connect → In-App Purchases"
+      ],
+      "aiPrompt": {
+        "en": "My app was rejected under 3.1.1 because it uses {PAYMENT_PROVIDER} inside the iOS build. Refactor my monetisation for StoreKit: (1) map my current products to StoreKit product types (auto-renewable subscription / non-consumable / consumable) with suggested product IDs and price points, (2) implement purchase, restore, and transaction observation for my stack {STACK}, (3) add server-side receipt validation with the App Store Server API, (4) strip all external checkout UI from the iOS build behind a platform check, (5) list what stays on Stripe and why it is compliant.",
+        "ru": "Приложение отклонили по 3.1.1 из-за {PAYMENT_PROVIDER} внутри iOS-билда. Переведи монетизацию на StoreKit: (1) сопоставь мои текущие продукты с типами StoreKit (автовозобновляемая подписка / непотребляемый / потребляемый) с предлагаемыми product ID и ценами, (2) реализуй покупку, восстановление и наблюдение за транзакциями для стека {STACK}, (3) добавь серверную валидацию чеков через App Store Server API, (4) убери весь внешний checkout-UI из iOS-билда за проверкой платформы, (5) перечисли, что остаётся на Stripe и почему это соответствует правилам."
+      },
+      "kit": "playbook/06-apple-3.1.1.md"
+    },
+    {
+      "id": "apple-2-1-crash-bug",
+      "platform": "apple",
+      "guideline": "2.1",
+      "name": { "en": "Crash / bug / incomplete build", "ru": "Крэш / баг / неполный билд" },
+      "code": "2.1",
+      "match": [
+        "crashed",
+        "we encountered a bug",
+        "app terminated",
+        "did not launch",
+        "blank screen",
+        "white screen",
+        "incomplete",
+        "placeholder content",
+        "beta",
+        "lorem ipsum"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "The reviewer hit a crash, a white screen, or placeholder content. In wrapped web apps the classic cause is a white screen on launch: the remote URL is slow or unreachable, the WebView has no loading state, and the reviewer sees a blank app for 10 seconds and rejects it.",
+        "ru": "Ревьюер поймал крэш, белый экран или контент-заглушку. В обёртках над веб-приложениями классическая причина — белый экран при запуске: удалённый URL медленный или недоступен, у WebView нет состояния загрузки, ревьюер 10 секунд видит пустое приложение и отклоняет его."
+      },
+      "fix": {
+        "en": [
+          "Always ship a bundled offline shell so the first paint never depends on the network.",
+          "Add a native splash screen with correct dimensions for all device classes (no stretched logo).",
+          "Add an explicit loading state and a retry button for remote content.",
+          "Remove every piece of placeholder copy: 'Coming soon', 'Lorem ipsum', TODO buttons, dead links, empty tabs.",
+          "Test the exact submitted build on a real device on a cellular connection, not just Wi-Fi in your office.",
+          "Add crash reporting (Sentry/Crashlytics) before submission so you can see what the reviewer saw."
+        ],
+        "ru": [
+          "Всегда вшивайте локальную офлайн-оболочку, чтобы первая отрисовка не зависела от сети.",
+          "Добавьте нативный сплэш с корректными размерами под все классы устройств (без растянутого логотипа).",
+          "Сделайте явное состояние загрузки и кнопку «Повторить» для удалённого контента.",
+          "Уберите все заглушки: «Скоро», «Lorem ipsum», кнопки-TODO, мёртвые ссылки, пустые вкладки.",
+          "Протестируйте именно отправленный билд на реальном устройстве через мобильную сеть, а не только по Wi-Fi в офисе.",
+          "Подключите crash-репортинг (Sentry/Crashlytics) до отправки, чтобы видеть то же, что увидел ревьюер."
+        ]
+      },
+      "files": [
+        "www/index.html",
+        "native splash assets",
+        "crash reporting config"
+      ],
+      "aiPrompt": {
+        "en": "My wrapped web app shows a white screen on launch in bad network conditions and got rejected. Redesign my startup path for a Capacitor app: bundled offline shell, instant first paint, native splash handoff, loading skeleton for remote data, retry with exponential backoff, and an offline error screen. Give me the code for {STACK} plus the capacitor.config.ts server.errorPath setup and the list of splash/icon sizes I must generate.",
+        "ru": "Моя обёртка показывает белый экран при запуске на плохой сети, и её отклонили. Перепроектируй путь запуска для Capacitor-приложения: локальная офлайн-оболочка, мгновенная первая отрисовка, передача от нативного сплэша, скелетон загрузки для удалённых данных, повтор с экспоненциальным бэкоффом и экран офлайн-ошибки. Дай код для {STACK}, настройку server.errorPath в capacitor.config.ts и список размеров сплэшей и иконок, которые нужно сгенерировировать."
+      },
+      "kit": "playbook/07-apple-2.1-crash.md"
+    },
+    {
+      "id": "apple-5-1-1-privacy-manifest",
+      "platform": "apple",
+      "guideline": "5.1.1 / ITMS-91053",
+      "name": { "en": "Missing privacy manifest / API declarations", "ru": "Нет privacy manifest / деклараций API" },
+      "code": "ITMS-91053",
+      "match": [
+        "ITMS-91053",
+        "ITMS-90",
+        "PrivacyInfo.xcprivacy",
+        "privacy manifest",
+        "required reason API",
+        "NSPrivacyAccessedAPITypes",
+        "missing API declaration"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "Since 2024 Apple requires a PrivacyInfo.xcprivacy manifest declaring 'required reason' APIs (file timestamps, disk space, system boot time, user defaults) and any tracking domains. Third-party SDKs must ship their own manifests. AI builders never add this because no prompt naturally produces it.",
+        "ru": "С 2024 года Apple требует манифест PrivacyInfo.xcprivacy с объявлением API «с обязательным обоснованием» (временные метки файлов, свободное место, время загрузки системы, user defaults) и доменов отслеживания. Сторонние SDK обязаны поставлять собственные манифесты. ИИ-билдеры это никогда не добавляют, потому что ни один промпт сам по себе этого не порождает."
+      },
+      "fix": {
+        "en": [
+          "Add PrivacyInfo.xcprivacy to the iOS target with NSPrivacyAccessedAPITypes for every required-reason API your dependencies touch.",
+          "Common declarations: NSPrivacyAccessedAPICategoryFileTimestamp, NSPrivacyAccessedAPICategoryDiskSpace, NSPrivacyAccessedAPICategorySystemBootTime, NSPrivacyAccessedAPICategoryUserDefaults.",
+          "Set NSPrivacyTracking to false unless you actually track, and list tracking domains in NSPrivacyTrackingDomains.",
+          "Update every third-party SDK to a version that bundles its own privacy manifest.",
+          "Build an archive and inspect the generated Privacy Report in Xcode before submitting — it lists which SDK contributes which API.",
+          "Fix the ITMS email as soon as it arrives: it blocks submission entirely, and there is no appeal path."
+        ],
+        "ru": [
+          "Добавьте PrivacyInfo.xcprivacy в iOS-таргет с NSPrivacyAccessedAPITypes для каждого API с обязательным обоснованием, который затрагивают ваши зависимости.",
+          "Типовые декларации: NSPrivacyAccessedAPICategoryFileTimestamp, NSPrivacyAccessedAPICategoryDiskSpace, NSPrivacyAccessedAPICategorySystemBootTime, NSPrivacyAccessedAPICategoryUserDefaults.",
+          "Установите NSPrivacyTracking в false, если вы реально не отслеживаете пользователей, и перечислите домены трекинга в NSPrivacyTrackingDomains.",
+          "Обновите все сторонние SDK до версий с собственным privacy-манифестом.",
+          "Соберите архив и посмотрите сгенерированный Privacy Report в Xcode до отправки — он показывает, какой SDK даёт какой API.",
+          "Чините письмо ITMS сразу: оно полностью блокирует отправку, и пути апелляции тут нет."
+        ]
+      },
+      "files": [
+        "ios/App/App/PrivacyInfo.xcprivacy",
+        "Podfile / package.json (SDK versions)",
+        "Xcode → Organizer → Privacy Report"
+      ],
+      "aiPrompt": {
+        "en": "I received an ITMS-91053 email about missing required reason API declarations. Here is my dependency list: {DEPS}. Generate a complete PrivacyInfo.xcprivacy for my Capacitor iOS app, listing exactly which NSPrivacyAccessedAPICategory entries I need and the correct NSPrivacyAccessedAPICategoryReasons codes for each, plus NSPrivacyTracking and NSPrivacyTrackingDomains. Then tell me which of my SDKs are known to lack their own manifests and what versions to upgrade to.",
+        "ru": "Я получил письмо ITMS-91053 об отсутствии деклараций API с обязательным обоснованием. Вот список моих зависимостей: {DEPS}. Сгенерируй полный PrivacyInfo.xcprivacy для моего Capacitor iOS-приложения, точно указав нужные записи NSPrivacyAccessedAPICategory и правильные коды NSPrivacyAccessedAPICategoryReasons для каждой, плюс NSPrivacyTracking и NSPrivacyTrackingDomains. Затем скажи, у каких из моих SDK известно отсутствие собственного манифеста и до каких версий их обновить."
+      },
+      "kit": "playbook/08-apple-privacy-manifest.md"
+    },
+    {
+      "id": "apple-4-3-spam",
+      "platform": "apple",
+      "guideline": "4.3",
+      "name": { "en": "Spam / duplicate apps", "ru": "Спам / дубликаты приложений" },
+      "code": "4.3",
+      "match": [
+        "4.3",
+        "duplicate",
+        "spam",
+        "same codebase",
+        "existing app",
+        "template app"
+      ],
+      "severity": "blocker",
+      "frequency": "medium",
+      "reason": {
+        "en": "Apple detected that your app is a near-copy of another app (yours or someone else's) or built from a widely-used template. Since AI tools let people ship 10 near-identical apps, Apple tightened this hard. Being rejected as spam can also put your whole developer account at risk.",
+        "ru": "Apple обнаружила, что ваше приложение почти копия другого (вашего или чужого) либо собрано из широко используемого шаблона. Поскольку ИИ-инструменты позволяют выпускать десяток почти одинаковых приложений, Apple сильно закрутила этот пункт. Отказ по спаму может поставить под риск весь ваш аккаунт разработчика."
+      },
+      "fix": {
+        "en": [
+          "Differentiate visibly: unique branding, custom icon, distinct colour system, unique onboarding, original screenshots.",
+          "Change the app's information architecture, not just the name — reviewers compare flows.",
+          "Do not submit multiple apps that share a codebase with only content swapped.",
+          "If you build client apps from one template, each client must own a distinct developer account and a genuinely distinct product.",
+          "Write a unique App Review note explaining what makes this app different and who it is for.",
+          "If wrongly flagged, reply in Resolution Centre with specifics — generic appeals are ignored."
+        ],
+        "ru": [
+          "Сделайте видимые отличия: уникальный бренд, собственная иконка, своя цветовая система, оригинальный онбординг, авторские скриншоты.",
+          "Меняйте информационную архитектуру, а не только название — ревьюеры сравнивают сценарии.",
+          "Не отправляйте несколько приложений на одном коде с заменённым контентом.",
+          "Если делаете клиентские приложения из одного шаблона, у каждого клиента должен быть свой аккаунт разработчика и реально отличающийся продукт.",
+          "Напишите уникальные заметки для App Review: чем приложение отличается и для кого оно.",
+          "Если отметили ошибочно, отвечайте в Resolution Centre с конкретикой — общие апелляции игнорируют."
+        ]
+      },
+      "files": [
+        "branding assets",
+        "onboarding flow",
+        "App Store Connect metadata"
+      ],
+      "aiPrompt": {
+        "en": "My app was rejected under 4.3 as a duplicate/spam. It shares a codebase with my other app {OTHER_APP}. Give me a concrete differentiation plan: information architecture changes, unique onboarding flow, distinct visual identity rules, and a rewritten App Review note. Then draft a Resolution Centre reply that is specific, polite and does not admit to spamming, referencing the actual differences between the two products.",
+        "ru": "Приложение отклонили по 4.3 как дубликат/спам. У него общий код с моим другим приложением {OTHER_APP}. Дай конкретный план дифференциации: изменения информационной архитектуры, уникальный онбординг, правила отдельной визуальной идентичности и переписанные заметки для App Review. Затем составь ответ в Resolution Centre — конкретный, вежливый, без признания в спаме, со ссылками на реальные различия продуктов."
+      },
+      "kit": "playbook/09-apple-4.3.md"
+    },
+    {
+      "id": "apple-2-3-3-screenshots",
+      "platform": "apple",
+      "guideline": "2.3.3",
+      "name": { "en": "Screenshots / metadata mismatch", "ru": "Скриншоты / несоответствие метаданных" },
+      "code": "2.3.3",
+      "match": [
+        "2.3.3",
+        "2.3.7",
+        "2.3.1",
+        "screenshots",
+        "accurately reflect",
+        "metadata",
+        "description does not",
+        "keywords"
+      ],
+      "severity": "high",
+      "frequency": "medium",
+      "reason": {
+        "en": "Screenshots show features that do not exist, include other brands' logos or device frames Apple dislikes, or the description/keywords promise something the app does not deliver. AI builders routinely generate marketing screenshots for features they never finished.",
+        "ru": "Скриншоты показывают несуществующие функции, содержат логотипы чужих брендов или рамки устройств, которые Apple не любит, либо описание и ключевые слова обещают то, чего приложение не делает. ИИ-билдеры регулярно генерируют маркетинговые скриншоты для недоделанных функций."
+      },
+      "fix": {
+        "en": [
+          "Use only real in-app screenshots, captured from the exact build you submit.",
+          "Required sizes: 6.9-inch iPhone (1320x2868 or 2868x1320) and 13-inch iPad (2064x2752) if you support iPad.",
+          "No placeholder text, no fake data, no unreleased features, no price claims that differ from the in-app price.",
+          "Remove mentions of other platforms ('Best app on Android') and beta/test language from the description.",
+          "Do not stuff keywords in the title/subtitle; Apple rejects obvious keyword spam.",
+          "Keep marketing copy on the screenshot itself minimal and true."
+        ],
+        "ru": [
+          "Используйте только настоящие скриншоты из приложения, снятые с того самого билда, который отправляете.",
+          "Обязательные размеры: iPhone 6,9″ (1320x2868 или 2868x1320) и iPad 13″ (2064x2752), если поддерживаете iPad.",
+          "Никаких заглушек, фейковых данных, невыпущенных функций и ценовых обещаний, отличающихся от цены в приложении.",
+          "Уберите из описания упоминания других платформ («Лучшее приложение на Android») и слова beta/test.",
+          "Не набивайте ключевые слова в заголовок и подзаголовок — явный keyword spam Apple отклоняет.",
+          "Маркетинговый текст на самом скриншоте держите минимальным и правдивым."
+        ]
+      },
+      "files": ["App Store Connect → screenshots", "App Store Connect → description/keywords"],
+      "aiPrompt": {
+        "en": "Rewrite my App Store listing for compliance and conversion. App: {APP_DESCRIPTION}. Produce: app name (max 30 chars, no keyword stuffing), subtitle (30 chars), 5 screenshot captions (each tied to a real screen I list below: {SCREENS}), full description (4000 chars, no external platform mentions, no beta language), 100 characters of keywords (comma separated, no repetition of words already in the title), and promotional text. Flag anything in my current copy that could trigger guideline 2.3.",
+        "ru": "Перепиши мой листинг в App Store под соответствие правилам и конверсию. Приложение: {APP_DESCRIPTION}. Нужно: название (до 30 символов, без набивки ключевиков), подзаголовок (30 символов), 5 подписей к скриншотам (каждая привязана к реальному экрану из списка: {SCREENS}), полное описание (4000 символов, без упоминаний сторонних платформ и слов beta), 100 символов ключевых слов (через запятую, без повторов слов из названия) и промо-текст. Отметь всё в моём текущем тексте, что может вызвать отказ по правилу 2.3."
+      },
+      "kit": "playbook/10-apple-2.3.md"
+    },
+    {
+      "id": "apple-1-2-user-generated",
+      "platform": "apple",
+      "guideline": "1.2",
+      "name": { "en": "User-generated content moderation", "ru": "Модерация пользовательского контента" },
+      "code": "1.2",
+      "match": [
+        "1.2",
+        "user-generated content",
+        "UGC",
+        "reporting mechanism",
+        "block the user",
+        "content filter",
+        "objectionable content"
+      ],
+      "severity": "blocker",
+      "frequency": "medium",
+      "reason": {
+        "en": "If users can post content others see, Apple requires four things: a filtering mechanism, a way to report objectionable content, the ability to block users, and published contact info. AI-built social/community/chat apps almost never include these, because nobody prompts for them.",
+        "ru": "Если пользователи могут публиковать контент, который видят другие, Apple требует четыре вещи: механизм фильтрации, способ пожаловаться на контент, возможность блокировать пользователей и опубликованные контакты. ИИ-приложения с соцфункциями, чатами и сообществами почти никогда этого не содержат, потому что в промпте об этом никто не просит."
+      },
+      "fix": {
+        "en": [
+          "Add a report button on every piece of UGC, wired to a real queue you actually review.",
+          "Add block user functionality that hides their content from the blocker.",
+          "Add automated filtering (profanity/NSFW filter or a moderation API) — even a basic word list counts as a mechanism.",
+          "Publish a support email and your EULA in the app and in App Store Connect.",
+          "Respond to reports within 24 hours and keep a log — Apple can ask.",
+          "In App Review notes, describe your moderation workflow explicitly, including who reviews reports."
+        ],
+        "ru": [
+          "Добавьте кнопку жалобы на каждый элемент пользовательского контента, ведущую в реальную очередь, которую вы действительно разбираете.",
+          "Добавьте блокировку пользователя, скрывающую его контент от заблокировавшего.",
+          "Добавьте автоматическую фильтрацию (фильтр мата/NSFW или moderation API) — даже простой список слов считается механизмом.",
+          "Опубликуйте email поддержки и EULA в приложении и в App Store Connect.",
+          "Реагируйте на жалобы в течение 24 часов и ведите лог — Apple может спросить.",
+          "В заметках для App Review явно опишите процесс модерации, включая то, кто разбирает жалобы."
+        ]
+      },
+      "files": ["UGC components", "backend moderation queue", "in-app EULA / support screen"],
+      "aiPrompt": {
+        "en": "Add App Store Guideline 1.2 UGC compliance to my app. Stack {STACK}, database {DATABASE}. UGC surfaces: {SURFACES}. Deliver: report flow UI + backend queue with status, block user model and enforcement across all surfaces, an automated content filter with a configurable blocklist plus optional moderation API integration, an admin view for me to triage reports, EULA acceptance at signup, and the App Review note describing the moderation workflow.",
+        "ru": "Добавь в моё приложение соответствие правилу App Store 1.2 для пользовательского контента. Стек {STACK}, база {DATABASE}. Поверхности с UGC: {SURFACES}. Нужно: UI жалобы и бэкенд-очередь со статусами, модель блокировки пользователя и её применение во всех поверхностях, автоматический фильтр контента с настраиваемым блок-листом и опциональным moderation API, админ-вью для разбора жалоб, принятие EULA при регистрации и заметки для App Review с описанием модерации."
+      },
+      "kit": "playbook/11-apple-1.2.md"
+    },
+    {
+      "id": "apple-4-0-design",
+      "platform": "apple",
+      "guideline": "4.0 / 4.1",
+      "name": { "en": "Design: broken layout, non-native feel", "ru": "Дизайн: сломанная вёрстка, ненативный вид" },
+      "code": "4.0",
+      "match": [
+        "4.0",
+        "4.1",
+        "design",
+        "user experience",
+        "not following",
+        "Human Interface",
+        "layout issue",
+        "cut off",
+        "overlapping",
+        "does not render correctly"
+      ],
+      "severity": "high",
+      "frequency": "medium",
+      "reason": {
+        "en": "Layout breaks in the native shell: content under the notch, keyboard covering inputs, back button missing, pinch-zoom on, safe-area ignored. Web apps built for a desktop viewport rarely survive a WebView without adjustment.",
+        "ru": "Вёрстка ломается в нативной оболочке: контент под «чёлкой», клавиатура перекрывает поля, нет кнопки назад, включён pinch-zoom, игнорируются safe-area. Веб-приложения, собранные под десктопный вьюпорт, редко выживают в WebView без правок."
+      },
+      "fix": {
+        "en": [
+          "Add the viewport-fit=cover meta tag and use env(safe-area-inset-*) in your CSS for top/bottom padding.",
+          "Disable pinch zoom and text callouts that feel non-native (-webkit-touch-callout, user-select on UI chrome).",
+          "Handle the keyboard: scroll the focused input into view (Capacitor Keyboard plugin, resize: 'body').",
+          "Provide a way back from every screen — a hardware back gesture on Android, a visible back control on iOS.",
+          "Test on the smallest supported device (iPhone SE class) and on a tablet, not only on your own phone.",
+          "Match native expectations for tap target sizes (44x44 pt minimum)."
+        ],
+        "ru": [
+          "Добавьте мета-тег viewport-fit=cover и используйте env(safe-area-inset-*) в CSS для верхних и нижних отступов.",
+          "Отключите pinch-zoom и текстовые вызовы, которые выглядят ненативно (-webkit-touch-callout, user-select для элементов интерфейса).",
+          "Обработайте клавиатуру: прокручивайте активное поле в видимую область (плагин Capacitor Keyboard, resize: 'body').",
+          "Обеспечьте выход назад с каждого экрана — жест «назад» на Android и видимый элемент назад на iOS.",
+          "Тестируйте на самом маленьком поддерживаемом устройстве (уровня iPhone SE) и на планшете, а не только на своём телефоне.",
+          "Соответствуйте нативным ожиданиям по размеру зон нажатия (минимум 44x44 pt)."
+        ]
+      },
+      "files": ["index.html meta tags", "global CSS", "capacitor.config.ts (Keyboard plugin)"],
+      "aiPrompt": {
+        "en": "Make my web app feel native inside a Capacitor shell. Stack {STACK}. Fix in order: safe-area insets for notch and home indicator, keyboard overlap on inputs, disabled pinch zoom and long-press callouts on UI chrome, 44pt tap targets, back navigation, overscroll behaviour, and status bar theming for light/dark. Output the CSS variables, the index.html meta tags, the capacitor.config.ts plugin settings, and any component changes needed.",
+        "ru": "Сделай так, чтобы моё веб-приложение выглядело нативно внутри Capacitor-оболочки. Стек {STACK}. Исправь по порядку: safe-area отступы под «чёлку» и home-индикатор, перекрытие полей клавиатурой, отключение pinch-zoom и долгого нажатия на элементах интерфейса, зоны нажатия 44pt, навигацию назад, поведение overscroll и тему статус-бара для светлой/тёмной. Выведи CSS-переменные, мета-теги index.html, настройки плагинов в capacitor.config.ts и нужные изменения компонентов."
+      },
+      "kit": "playbook/12-apple-4.0-design.md"
+    },
+    {
+      "id": "apple-encryption-itsappnoncompliantencryption",
+      "platform": "apple",
+      "guideline": "Export Compliance",
+      "name": { "en": "Missing encryption declaration (ITSAppUsesNonExemptEncryption)", "ru": "Нет декларации о шифровании" },
+      "code": "ITSAppUsesNonExemptEncryption",
+      "match": [
+        "ITSAppUsesNonExemptEncryption",
+        "export compliance",
+        "encryption",
+        "missing encryption",
+        "French declaration"
+      ],
+      "severity": "high",
+      "frequency": "high",
+      "reason": {
+        "en": "Every upload asks about encryption. If you skip it, the build is not processable and cannot be selected for review. Most apps qualify for exemption because they only use HTTPS and OS-provided crypto.",
+        "ru": "При каждой загрузке спрашивают про шифрование. Если пропустить, билд не обрабатывается и его нельзя выбрать для ревью. Большинство приложений подпадают под исключение, потому что используют только HTTPS и криптографию операционной системы."
+      },
+      "fix": {
+        "en": [
+          "Add ITSAppUsesNonExemptEncryption = NO to Info.plist if you only use standard HTTPS/TLS and OS crypto. This removes the question permanently.",
+          "If you implement custom cryptography, answer honestly and be ready to provide documentation.",
+          "Set the export compliance answer in App Store Connect for the current build before submitting.",
+          "Do not copy-paste Info.plist keys from a tutorial without understanding them — a wrong crypto answer is a legal problem, not a review problem."
+        ],
+        "ru": [
+          "Добавьте ITSAppUsesNonExemptEncryption = NO в Info.plist, если используете только стандартный HTTPS/TLS и криптографию ОС. Это навсегда уберёт вопрос.",
+          "Если реализована собственная криптография, отвечайте честно и будьте готовы предоставить документацию.",
+          "Проставьте ответ об экспортном соответствии в App Store Connect для текущего билда до отправки.",
+          "Не копируйте ключи Info.plist из туториалов, не понимая их: неверный ответ про криптографию — это юридическая проблема, а не проблема ревью."
+        ]
+      },
+      "files": ["ios/App/App/Info.plist", "App Store Connect → Build → Export Compliance"],
+      "aiPrompt": {
+        "en": "List every place my iOS project uses cryptography (including inside dependencies) and tell me whether my app qualifies for the encryption exemption. Then give me the exact Info.plist keys to add so the export compliance question never blocks a submission again, and explain in one paragraph what would change the answer.",
+        "ru": "Перечисли все места, где мой iOS-проект использует криптографию (включая зависимости), и скажи, подпадает ли приложение под исключение по шифрованию. Затем дай точные ключи Info.plist, чтобы вопрос об экспортном соответствии больше никогда не блокировал отправку, и одним абзацем объясни, что изменило бы ответ."
+      },
+      "kit": "playbook/13-apple-encryption.md"
+    },
+    {
+      "id": "apple-push-entitlement",
+      "platform": "apple",
+      "guideline": "Provisioning / Entitlements",
+      "name": { "en": "Push notifications entitlement missing", "ru": "Нет entitlement для push-уведомлений" },
+      "code": "aps-environment",
+      "match": [
+        "aps-environment",
+        "push notification",
+        "Push Notifications capability",
+        "entitlements",
+        "provisioning profile",
+        "no profiles for 'com."
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "Build fails or push does not register because the App ID lacks the Push Notifications capability, or the provisioning profile predates adding it. Extremely common when a plugin is added late by an AI assistant.",
+        "ru": "Сборка падает или push не регистрируется, потому что у App ID нет возможности Push Notifications либо профиль провижининга создан раньше её добавления. Очень частая ситуация, когда плагин добавляется в конце руками ИИ-ассистента."
+      },
+      "fix": {
+        "en": [
+          "Enable Push Notifications capability for the App ID in developer.apple.com, then regenerate the provisioning profile.",
+          "In Xcode: Signing & Capabilities → + Capability → Push Notifications, and Background Modes → Remote notifications.",
+          "Upload your APNs key (.p8) to your push provider (OneSignal/Firebase/Expo) with the correct Key ID and Team ID.",
+          "Request permission at a contextual moment, not on cold launch — permission rates drop dramatically on cold launch.",
+          "Test push on a real device: the simulator cannot receive APNs.",
+          "Verify the token is stored server-side against the user record."
+        ],
+        "ru": [
+          "Включите возможность Push Notifications для App ID на developer.apple.com, затем пересоздайте профиль провижининга.",
+          "В Xcode: Signing & Capabilities → + Capability → Push Notifications и Background Modes → Remote notifications.",
+          "Загрузите ключ APNs (.p8) в ваш сервис push (OneSignal/Firebase/Expo) с правильными Key ID и Team ID.",
+          "Запрашивайте разрешение в контекстный момент, а не при холодном запуске — на холодном запуске процент согласия резко ниже.",
+          "Тестируйте push на реальном устройстве: симулятор APNs не принимает.",
+          "Проверьте, что токен сохраняется на сервере в привязке к записи пользователя."
+        ]
+      },
+      "files": [
+        "developer.apple.com → Certificates, IDs & Profiles",
+        "ios/App/App/App.entitlements",
+        "ios/App/App/Info.plist (UIBackgroundModes)"
+      ],
+      "aiPrompt": {
+        "en": "Wire up push notifications end to end for my Capacitor app using {PUSH_PROVIDER}. Give me: the exact plugin packages and versions, capacitor.config.ts settings, iOS capability and entitlements changes, Android manifest and google-services setup, the contextual permission request flow with a pre-prompt for my stack {STACK}, server-side token storage schema, and a test script that sends a push to one user.",
+        "ru": "Подключи push-уведомления под ключ для моего Capacitor-приложения на {PUSH_PROVIDER}. Нужно: точные пакеты плагинов и версии, настройки capacitor.config.ts, изменения capability и entitlements в iOS, манифест Android и настройку google-services, контекстный запрос разрешения с предварительным экраном для стека {STACK}, схему хранения токенов на сервере и тестовый скрипт отправки push одному пользователю."
+      },
+      "kit": "playbook/14-apple-push.md"
+    },
+    {
+      "id": "google-personal-account-testing",
+      "platform": "google",
+      "guideline": "Personal developer account testing requirement",
+      "name": { "en": "12 testers / 14 days closed testing requirement", "ru": "Требование: 12 тестировщиков и 14 дней закрытого тестирования" },
+      "code": "closed-testing",
+      "match": [
+        "12 testers",
+        "14 days",
+        "closed testing",
+        "testers for 14 consecutive days",
+        "you need to have at least",
+        "opted in to testing"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Google Play requires personal (individual) developer accounts created after 13 November 2023 to run closed testing with at least 12 real testers who opt in for 14 consecutive days before the app can go to production. This is the single most shocking wall for first-time AI builders, and it is a calendar constraint, not a code constraint — you cannot buy your way around it.",
+        "ru": "Google Play требует, чтобы личные аккаунты разработчиков, созданные после 13 ноября 2023 года, провели закрытое тестирование минимум с 12 реальными тестировщиками, которые согласились участвовать, в течение 14 дней подряд — и только потом приложение попадает в продакшн. Это самая неожиданная стена для новичков, и ограничение календарное, а не кодовое: обойти его деньгами нельзя."
+      },
+      "fix": {
+        "en": [
+          "Start closed testing on day one, in parallel with development. The 14-day clock only starts once 12 testers have opted in.",
+          "Recruit testers early: friends, family, a Discord/Telegram community, beta testers from your waitlist. They must opt in through the actual Play Console link, not just be added to a list.",
+          "Testers must keep the app installed and use it — a tester who uninstalls on day 3 stops counting.",
+          "Use a track you can iterate on (Internal testing does not count toward the 12/14 rule; Closed testing does).",
+          "If the timeline is unacceptable, the alternative is an organisation account (D-U-N-S number required), which does not carry the 12/14 requirement.",
+          "Ship the Apple App Store first while Play closed testing runs — iOS has no equivalent waiting period."
+        ],
+        "ru": [
+          "Начинайте закрытое тестирование в первый же день, параллельно с разработкой. Отсчёт 14 дней стартует только когда 12 тестировщиков согласились.",
+          "Рекрутируйте тестировщиков заранее: друзья, семья, сообщество в Discord/Telegram, бета-тестеры из листа ожидания. Они должны принять приглашение по реальной ссылке Play Console, а не просто быть добавленными в список.",
+          "Тестировщики должны держать приложение установленным и пользоваться им — тот, кто удалит его на третий день, перестаёт учитываться.",
+          "Используйте трек, в котором можно итерировать: Internal testing не засчитывается в правило 12/14, Closed testing — засчитывается.",
+          "Если сроки неприемлемы, альтернатива — аккаунт организации (нужен номер D-U-N-S), на который требование 12/14 не распространяется.",
+          "Выпускайте сначала App Store, пока идёт закрытое тестирование в Play — в iOS аналогичного периода ожидания нет."
+        ]
+      },
+      "files": ["Play Console → Testing → Closed testing", "tester recruitment list"],
+      "aiPrompt": {
+        "en": "Build me a 14-day closed testing execution plan for Google Play: a recruitment message for 12+ testers (write versions for friends, a Telegram/Discord community and a waitlist email), an onboarding checklist each tester must complete, a daily usage task list that keeps them active without being annoying, a tracker spreadsheet schema to monitor opt-in dates and installs, and a timeline showing the earliest possible production release date.",
+        "ru": "Составь план закрытого тестирования на 14 дней для Google Play: сообщения для рекрутинга 12+ тестировщиков (варианты для друзей, для сообщества в Telegram/Discord и для письма по листу ожидания), чек-лист онбординга для каждого тестировщика, ежедневный список задач, который удерживает их активными без раздражения, схему таблицы-трекера с датами согласия и установок, и таймлайн с максимально ранней датой продакшн-релиза."
+      },
+      "kit": "playbook/15-google-12-testers.md"
+    },
+    {
+      "id": "google-data-safety",
+      "platform": "google",
+      "guideline": "User Data / Data safety",
+      "name": { "en": "Invalid Data safety form", "ru": "Некорректная форма Data safety" },
+      "code": "data-safety",
+      "match": [
+        "data safety",
+        "Data safety form",
+        "Invalid Data safety",
+        "declared",
+        "undeclared",
+        "hidden SDK",
+        "device or other ids"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Google compares what your form declares against what it observes your SDKs actually collecting. Third-party SDKs bundled by AI tools (analytics, crash reporting, push, ads) collect Device IDs, App interactions and Diagnostics that almost nobody declares. Mismatch = rejection.",
+        "ru": "Google сверяет заявленное в форме с тем, что реально собирают ваши SDK. Сторонние SDK, которые добавляют ИИ-инструменты (аналитика, crash-репортинг, push, реклама), собирают Device IDs, App interactions и Diagnostics, а декларирует это почти никто. Расхождение = отказ."
+      },
+      "fix": {
+        "en": [
+          "Enumerate every SDK in the build (including transitively bundled ones) before filling the form.",
+          "Declare Device or other IDs if you use Firebase, OneSignal, Sentry, Crashlytics, GA4, Facebook SDK, or AppsFlyer — nearly all of them collect an identifier.",
+          "Declare App interactions and Diagnostics for any analytics or crash tool.",
+          "State whether data is encrypted in transit (yes, if you only use HTTPS) and whether users can request deletion.",
+          "Make your privacy policy consistent with the form — contradictions are a separate rejection trigger.",
+          "Re-check the form on every SDK update; a new dependency silently changes your answers.",
+          "Provide the account deletion URL in the form and make sure it works logged-out."
+        ],
+        "ru": [
+          "Перечислите все SDK в билде (включая транзитивно добавленные) до заполнения формы.",
+          "Декларируйте Device or other IDs, если используете Firebase, OneSignal, Sentry, Crashlytics, GA4, Facebook SDK или AppsFlyer — почти все они собирают идентификатор.",
+          "Декларируйте App interactions и Diagnostics для любой аналитики или crash-инструмента.",
+          "Укажите, шифруются ли данные при передаче (да, если только HTTPS) и может ли пользователь запросить удаление.",
+          "Приведите политику конфиденциальности в соответствие с формой — противоречия дают отдельный отказ.",
+          "Перепроверяйте форму при каждом обновлении SDK: новая зависимость незаметно меняет ваши ответы.",
+          "Укажите в форме URL удаления аккаунта и убедитесь, что он работает без входа."
+        ]
+      },
+      "files": ["Play Console → Data safety", "privacy policy", "SDK inventory"],
+      "aiPrompt": {
+        "en": "Here is my dependency list and my SDK usage: {DEPS}. Produce a complete Google Play Data safety form answer sheet: for each data type in Google's taxonomy (Location, Personal info, Financial info, Health and fitness, Messages, Photos and videos, Audio files, Files and docs, Calendar, Contacts, App activity, Web browsing, App info and performance, Device or other IDs) tell me Collect / Share / Neither, whether it is optional, the purpose, whether it is encrypted in transit, and whether users can request deletion. Then list which of my SDKs is the reason for each 'yes' so I can defend the form if Google asks.",
+        "ru": "Вот мой список зависимостей и используемые SDK: {DEPS}. Составь полный лист ответов для формы Google Play Data safety: по каждому типу данных из таксономии Google (местоположение, персональные данные, финансовая информация, здоровье, сообщения, фото и видео, аудио, файлы и документы, календарь, контакты, активность в приложении, веб-просмотры, информация о приложении и производительность, идентификаторы устройства) укажи Collect / Share / Neither, обязательность, цель, шифрование при передаче и возможность запроса удаления. Затем перечисли, какой из моих SDK является причиной каждого «да», чтобы я мог обосновать форму при вопросе Google."
+      },
+      "kit": "playbook/16-google-data-safety.md"
+    },
+    {
+      "id": "google-account-deletion",
+      "platform": "google",
+      "guideline": "User Data / Account deletion",
+      "name": { "en": "Account deletion requirement", "ru": "Требование удаления аккаунта" },
+      "code": "account-deletion",
+      "match": [
+        "account deletion",
+        "Account Deletion Requirement",
+        "delete their account",
+        "data deletion",
+        "web-based account deletion"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "If your app lets users create an account, Google requires both an in-app deletion path and a web-based deletion URL that works from a browser without the app installed. Deletion must remove the account AND the associated data; offering only deactivation is not enough.",
+        "ru": "Если в приложении можно создать аккаунт, Google требует и удаление внутри приложения, и веб-URL для удаления, работающий из браузера без установленного приложения. Удаление должно стирать и аккаунт, и связанные данные; одной деактивации недостаточно."
+      },
+      "fix": {
+        "en": [
+          "Add in-app Settings → Delete account with confirmation.",
+          "Publish a web page (e.g. yourdomain.com/delete-account) that lets a user delete by email + verification token, with no app required.",
+          "Put that URL in the Play Console Data safety form field and in your store listing.",
+          "Offer a choice: delete data now, or delete after a grace period (state the period in your policy).",
+          "Actually purge: auth user, database rows, storage objects, and third-party records (e.g. email list).",
+          "Send a confirmation email and log the deletion event with a timestamp."
+        ],
+        "ru": [
+          "Добавьте в приложении: Настройки → Удалить аккаунт с подтверждением.",
+          "Опубликуйте веб-страницу (например, yourdomain.com/delete-account) с удалением по email + токену подтверждения, без необходимости устанавливать приложение.",
+          "Укажите этот URL в поле формы Data safety в Play Console и в листинге.",
+          "Дайте выбор: удалить данные сразу или по истечении льготного периода (пропишите период в политике).",
+          "Реально очищайте: пользователя авторизации, записи в базе, объекты хранилища и записи в сторонних сервисах (например, в списке рассылки).",
+          "Отправляйте письмо-подтверждение и логируйте событие удаления с таймстампом."
+        ]
+      },
+      "files": ["in-app Settings", "/delete-account web page", "Play Console → Data safety"],
+      "aiPrompt": {
+        "en": "Implement Google Play account deletion compliance for my app. Stack {STACK}, auth {AUTH_PROVIDER}, db {DATABASE}, hosting {HOSTING}. Deliver: a public /delete-account page that verifies by email + token and works with JavaScript disabled fallback, the backend endpoint that purges auth user, db rows, storage objects and mailing-list records, the in-app deletion UI, the confirmation email copy in English and Russian, and the exact wording for the Play Console data deletion answers.",
+        "ru": "Реализуй соответствие требованиям Google Play об удалении аккаунта для моего приложения. Стек {STACK}, авторизация {AUTH_PROVIDER}, база {DATABASE}, хостинг {HOSTING}. Нужно: публичная страница /delete-account с проверкой по email + токену и фолбэком без JavaScript, бэкенд-эндпоинт, очищающий пользователя авторизации, записи базы, объекты хранилища и записи в списках рассылки, UI удаления в приложении, текст письма-подтверждения на английском и русском и точные формулировки ответов в Play Console."
+      },
+      "kit": "playbook/17-google-account-deletion.md"
+    },
+    {
+      "id": "google-target-api",
+      "platform": "google",
+      "guideline": "Target API level policy",
+      "name": { "en": "Target API level too low", "ru": "Слишком низкий target API level" },
+      "code": "targetSdk",
+      "match": [
+        "target API level",
+        "targetSdkVersion",
+        "API level 3",
+        "does not meet the target",
+        "update your app"
+      ],
+      "severity": "blocker",
+      "frequency": "medium",
+      "reason": {
+        "en": "Play requires new apps and updates to target a recent Android API level. AI-generated projects frequently pin old versions, or the template you copied is two years out of date.",
+        "ru": "Play требует, чтобы новые приложения и обновления были нацелены на свежий уровень Android API. Сгенерированные ИИ проекты часто фиксируют старые версии, либо скопированный шаблон устарел на пару лет."
+      },
+      "fix": {
+        "en": [
+          "Check the current required target API level in Play Console (the console states the deadline and the level explicitly).",
+          "Update variables.compileSdkVersion and variables.targetSdkVersion in android/variables.gradle to the required level.",
+          "Update Capacitor and all plugins to versions supporting that SDK — old plugins break the build.",
+          "Handle the behaviour changes that come with each SDK bump (notification permission, photo picker, foreground service types, exported flags).",
+          "Re-run the full app on a device with the newest Android version, not only an emulator.",
+          "If you use a wrapper service, ask them which SDK level their build template targets before paying."
+        ],
+        "ru": [
+          "Проверьте требуемый target API level в Play Console — консоль явно указывает уровень и дедлайн.",
+          "Обновите variables.compileSdkVersion и variables.targetSdkVersion в android/variables.gradle до нужного уровня.",
+          "Обновите Capacitor и все плагины до версий, поддерживающих этот SDK: старые плагины ломают сборку.",
+          "Отработайте изменения поведения каждого повышения SDK (разрешение на уведомления, photo picker, типы foreground-сервисов, флаг exported).",
+          "Прогоните приложение целиком на устройстве с самой новой версией Android, а не только в эмуляторе.",
+          "Если используете сервис-обёртку, до оплаты спросите, на какой уровень SDK нацелен их шаблон сборки."
+        ]
+      },
+      "files": ["android/variables.gradle", "android/app/build.gradle", "package.json"],
+      "aiPrompt": {
+        "en": "Upgrade my Capacitor Android project from targetSdk {CURRENT} to {REQUIRED}. List every breaking behaviour change between those levels that applies to a WebView-based app, give me the gradle and manifest diffs, the plugin versions to bump, and a test checklist covering notifications runtime permission, exported components, foreground service types and storage/photo access.",
+        "ru": "Обнови мой Capacitor Android-проект с targetSdk {CURRENT} до {REQUIRED}. Перечисли все ломающие изменения поведения между этими уровнями, применимые к приложению на WebView, дай диффы gradle и манифеста, версии плагинов для обновления и чек-лист тестирования, покрывающий рантайм-разрешение на уведомления, экспортируемые компоненты, типы foreground-сервисов и доступ к хранилищу/фото."
+      },
+      "kit": "playbook/18-google-target-api.md"
+    },
+    {
+      "id": "google-limited-functionality",
+      "platform": "google",
+      "guideline": "Minimum functionality / webview policy",
+      "name": { "en": "Limited functionality / converted website", "ru": "Ограниченная функциональность / конвертированный сайт" },
+      "code": "limited-functionality",
+      "match": [
+        "limited functionality",
+        "converted website",
+        "web template",
+        "does not provide a native",
+        "thin wrapper",
+        "not add value"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "Google's counterpart to Apple's 4.2. Apps that merely render a website, or that are built from a boilerplate template with no meaningful change, get rejected for providing a poor user experience and no incremental value.",
+        "ru": "Аналог Apple 4.2 от Google. Приложения, которые просто рендерят сайт или собраны из шаблонного бойлерплейта без осмысленных изменений, отклоняются за плохой пользовательский опыт и отсутствие дополнительной ценности."
+      },
+      "fix": {
+        "en": [
+          "Same native-capability rule as Apple: push, offline mode, biometrics, share, widgets, camera — used in the real flow.",
+          "Bundle the web assets rather than loading only a remote URL, and provide an offline experience.",
+          "Remove all browser chrome artefacts: horizontal scroll, desktop breakpoints, links that open in the same window.",
+          "Ensure the app does not simply mirror an existing public website page-for-page.",
+          "Write a Play Console reply describing the native features and the value versus the website version.",
+          "If you resell a template to multiple clients, each app must be materially different, or expect repeated rejections."
+        ],
+        "ru": [
+          "То же правило нативности, что и у Apple: push, офлайн-режим, биометрия, share, виджеты, камера — используемые в реальном сценарии.",
+          "Вшивайте веб-ассеты, а не грузите только удалённый URL, и обеспечьте офлайн-опыт.",
+          "Уберите все артефакты браузерного интерфейса: горизонтальный скролл, десктопные брейкпоинты, ссылки, открывающиеся в том же окне.",
+          "Убедитесь, что приложение не повторяет страница-в-страницу существующий публичный сайт.",
+          "В ответе в Play Console опишите нативные функции и ценность относительно веб-версии.",
+          "Если перепродаёте шаблон нескольким клиентам, каждое приложение должно существенно отличаться, иначе отказы будут повторяться."
+        ]
+      },
+      "files": ["capacitor.config.ts", "web build config", "Play Console → reply to rejection"],
+      "aiPrompt": {
+        "en": "My app was rejected by Google Play for limited functionality / being a converted website. It is a Capacitor wrapper around {APP_URL}. Give me: a prioritised list of native capabilities that are realistic for this product, the implementation plan for the top 3 with code for {STACK}, the offline-mode architecture, and a drafted reply to the Play Console policy team explaining the native value.",
+        "ru": "Google Play отклонил приложение за ограниченную функциональность / конвертированный сайт. Это Capacitor-обёртка над {APP_URL}. Дай: приоритизированный список нативных возможностей, реалистичных для этого продукта, план реализации топ-3 с кодом для {STACK}, архитектуру офлайн-режима и черновик ответа команде Play Console с объяснением нативной ценности."
+      },
+      "kit": "playbook/19-google-limited-functionality.md"
+    },
+    {
+      "id": "google-demo-credentials",
+      "platform": "google",
+      "guideline": "App completeness / test instructions",
+      "name": { "en": "Missing test instructions or demo credentials", "ru": "Нет тестовых инструкций или демо-доступов" },
+      "code": "test-instructions",
+      "match": [
+        "test instructions",
+        "sign in to test",
+        "we were unable to",
+        "demo credentials",
+        "login required",
+        "provide test",
+        "could not reproduce"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "Play reviewers operate from a test instruction field that most first-time submitters leave empty. If your app needs a login, a subscription, a location, or a specific device state, and you did not tell them, you get rejected for 'unable to test'.",
+        "ru": "Ревьюеры Play работают с полем тестовых инструкций, которое большинство новичков оставляет пустым. Если приложению нужны вход, подписка, геолокация или определённое состояние устройства, а вы об этом не сообщили, получите отказ «невозможно протестировать»."
+      },
+      "fix": {
+        "en": [
+          "Fill Play Console → App content / Release → Test instructions with demo credentials and a step-by-step path.",
+          "Pre-populate the demo account with data — empty states read as broken.",
+          "Disable email/SMS verification for the demo user, or provide the fixed code.",
+          "If a feature needs a real-world state (a booking, a location, a connected device), describe how to simulate it.",
+          "State clearly which features are free and which require a purchase, and how to test the paid path.",
+          "Include a video link of the core flow; it materially reduces re-review cycles."
+        ],
+        "ru": [
+          "Заполните Play Console → App content / Release → Test instructions демо-доступами и пошаговым сценарием.",
+          "Наполните демо-аккаунт данными — пустые состояния выглядят как поломка.",
+          "Отключите подтверждение по email/SMS для демо-пользователя либо укажите фиксированный код.",
+          "Если функции нужно реальное состояние (бронь, геолокация, подключённое устройство), опишите, как его сымитировать.",
+          "Чётко укажите, какие функции бесплатны, а какие требуют покупки, и как протестировать платный путь.",
+          "Добавьте ссылку на видео основного сценария — это заметно сокращает круги повторного ревью."
+        ]
+      },
+      "files": ["Play Console → Test instructions", "backend demo user seed"],
+      "aiPrompt": {
+        "en": "Write my Google Play test instructions. App: {APP_DESCRIPTION}. Login: {AUTH}. Paid features: {PAID_FEATURES}. Produce a copy-paste block with demo credentials placeholder, a numbered walkthrough of the happy path, how to test each paid feature without spending money, notes on any state the reviewer must simulate, and a list of what NOT to do in the app. Keep it under 1000 characters if possible, otherwise split into 'essential' and 'extended'.",
+        "ru": "Напиши тестовые инструкции для Google Play. Приложение: {APP_DESCRIPTION}. Вход: {AUTH}. Платные функции: {PAID_FEATURES}. Сделай готовый к вставке блок с плейсхолдером демо-доступов, нумерованный сценарий основного пути, способ протестировать каждую платную функцию без траты денег, примечания о состояниях, которые ревьюер должен сымитировать, и список того, чего в приложении делать НЕ нужно. Уложись в 1000 символов, если возможно, иначе раздели на «обязательное» и «дополнительное»."
+      },
+      "kit": "playbook/20-google-test-instructions.md"
+    },
+    {
+      "id": "google-ads-sdk-declaration",
+      "platform": "google",
+      "guideline": "Families policy / Ads declaration",
+      "name": { "en": "Ads SDK declaration / families policy", "ru": "Декларация рекламных SDK / семейная политика" },
+      "code": "ads-declaration",
+      "match": [
+        "ads declaration",
+        "families policy",
+        "target audience",
+        "ad SDK",
+        "children",
+        "mixed audience"
+      ],
+      "severity": "high",
+      "frequency": "medium",
+      "reason": {
+        "en": "You must declare whether your app contains ads and who the target audience is. If any part of your audience is children, Google enforces the Families policy: certified ad SDKs only, no personalised ads, no data collection for advertising.",
+        "ru": "Нужно задекларировать наличие рекламы и целевую аудиторию. Если часть аудитории — дети, действует семейная политика Google: только сертифицированные рекламные SDK, без персонализированной рекламы и без сбора данных для рекламы."
+      },
+      "fix": {
+        "en": [
+          "Declare ads accurately in Play Console → App content → Ads. A wrong declaration here is a policy strike.",
+          "Declare target audience and content; do not tick 'children' unless you are genuinely built for them and fully compliant.",
+          "If your audience includes children, use only Google-certified ad SDKs and disable personalised ads.",
+          "Ensure your privacy policy covers advertising identifiers and matches the Data safety form.",
+          "If you have no ads, say so — an undeclared ad SDK discovered later is worse than an over-declaration."
+        ],
+        "ru": [
+          "Точно декларируйте рекламу в Play Console → App content → Ads. Неверная декларация здесь — это policy strike.",
+          "Укажите целевую аудиторию и контент; не отмечайте «дети», если приложение реально не для них и не полностью соответствует требованиям.",
+          "Если аудитория включает детей, используйте только сертифицированные Google рекламные SDK и отключите персонализированную рекламу.",
+          "Убедитесь, что политика конфиденциальности покрывает рекламные идентификаторы и совпадает с формой Data safety.",
+          "Если рекламы нет, так и укажите: необъявленный рекламный SDK, найденный позже, хуже избыточной декларации."
+        ]
+      },
+      "files": ["Play Console → App content → Ads", "privacy policy"],
+      "aiPrompt": {
+        "en": "My app is {APP_DESCRIPTION} and it uses {AD_SDKS}. Tell me exactly how to answer the Play Console Ads declaration and Target audience sections, whether the Families policy applies to me, and what changes I must make to my ad configuration and privacy policy to stay compliant.",
+        "ru": "Моё приложение — {APP_DESCRIPTION}, используются {AD_SDKS}. Скажи точно, как ответить в Play Console в разделах «Реклама» и «Целевая аудитория», применима ли ко мне семейная политика и какие изменения нужно внести в конфигурацию рекламы и политику конфиденциальности для соответствия."
+      },
+      "kit": "playbook/21-google-ads.md"
+    },
+    {
+      "id": "google-metadata",
+      "platform": "google",
+      "guideline": "Metadata policy",
+      "name": { "en": "Metadata violations (title/keyword spam, misleading claims)", "ru": "Нарушения метаданных (спам в названии, ложные обещания)" },
+      "code": "metadata",
+      "match": [
+        "metadata",
+        "misleading",
+        "title",
+        "keyword",
+        "repetitive",
+        "unrelated",
+        "performance rating",
+        "emoji"
+      ],
+      "severity": "high",
+      "frequency": "medium",
+      "reason": {
+        "en": "Google caps the title at 30 characters and forbids keyword stuffing, emoji, price claims, and references to other brands or 'top/free/best' superlatives. AI-generated store copy violates this constantly because it is written for conversion, not for policy.",
+        "ru": "Google ограничивает название 30 символами и запрещает набивку ключевых слов, эмодзи, ценовые обещания, упоминания чужих брендов и превосходные степени вроде «top/free/best». Сгенерированные ИИ тексты для сторов нарушают это постоянно, потому что пишутся под конверсию, а не под правила."
+      },
+      "fix": {
+        "en": [
+          "Title: max 30 characters, no emoji, no ALL CAPS, no superlatives, no other brands.",
+          "Short description: max 80 characters, no repetition of the title words more than twice.",
+          "Do not claim rankings, awards, 'No.1', 'best', or price in metadata.",
+          "No misleading functionality claims — the app must do what the listing says.",
+          "Do not include testimonials, download counts, or performance claims in the listing.",
+          "Keep the icon free of text overlays that reference other brands or store badges."
+        ],
+        "ru": [
+          "Название: до 30 символов, без эмодзи, без КАПСА, без превосходных степеней и чужих брендов.",
+          "Краткое описание: до 80 символов, без повторения слов из названия более двух раз.",
+          "Не заявляйте в метаданных рейтинги, награды, «№1», «лучшее» и цены.",
+          "Никаких ложных обещаний о функциях — приложение должно делать то, что написано в листинге.",
+          "Не размещайте в листинге отзывы, счётчики загрузок и заявления о производительности.",
+          "На иконке не должно быть текстовых наложений с чужими брендами или бейджами сторов."
+        ]
+      },
+      "files": ["Play Console → Store listing"],
+      "aiPrompt": {
+        "en": "Rewrite my Google Play store listing to be policy-compliant and high-converting. App: {APP_DESCRIPTION}. Output: title (≤30 chars), short description (≤80 chars), full description (≤4000 chars) with a first-line hook, bullet features, and a call to action, plus 5 screenshot captions. Then run a compliance self-check listing every Google metadata rule you verified and any phrase in my draft that violated it.",
+        "ru": "Перепиши мой листинг в Google Play так, чтобы он соответствовал правилам и хорошо конвертил. Приложение: {APP_DESCRIPTION}. Выведи: название (≤30 симв.), краткое описание (≤80 симв.), полное описание (≤4000 симв.) с хуком в первой строке, буллетами функций и призывом к действию, плюс 5 подписей к скриншотам. Затем проведи самопроверку соответствия: перечисли каждое проверенное правило метаданных Google и каждую фразу из моего черновика, которая его нарушала."
+      },
+      "kit": "playbook/22-google-metadata.md"
+    },
+    {
+      "id": "google-signing",
+      "platform": "google",
+      "guideline": "App signing / keystore",
+      "name": { "en": "Signing, keystore and AAB errors", "ru": "Подпись, keystore и ошибки AAB" },
+      "code": "signing",
+      "match": [
+        "keystore",
+        "signing",
+        "APK signature",
+        "app bundle",
+        "AAB",
+        "upload key",
+        "signed with a different",
+        "certificate"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "Uploads fail because the build is signed with the wrong key, or a debug keystore was used, or an APK was uploaded where an AAB is required. Also the classic disaster: losing the upload key or the keystore password, which permanently blocks future updates.",
+        "ru": "Загрузка не проходит, потому что билд подписан не тем ключом, использован debug-keystore либо загружен APK там, где нужен AAB. Плюс классическая катастрофа: потерянный upload-ключ или пароль от keystore навсегда блокируют будущие обновления."
+      },
+      "fix": {
+        "en": [
+          "Use Play App Signing and upload an AAB, not an APK.",
+          "Generate ONE keystore, store it in an encrypted backup (password manager + offline copy), and never regenerate it.",
+          "Configure signing in android/app/build.gradle via a keystore.properties file that is git-ignored.",
+          "Never commit keystore.properties or the .jks file to git — add them to .gitignore before the first commit.",
+          "If you lose the upload key, request an upload key reset in Play Console (only possible with Play App Signing).",
+          "Verify the package name is final before the first upload — it can never be changed."
+        ],
+        "ru": [
+          "Используйте Play App Signing и загружайте AAB, а не APK.",
+          "Сгенерируйте ОДИН keystore, сохраните его в зашифрованном бэкапе (менеджер паролей + офлайн-копия) и никогда не пересоздавайте.",
+          "Настройте подпись в android/app/build.gradle через файл keystore.properties, исключённый из git.",
+          "Никогда не коммитьте keystore.properties и файл .jks — добавьте их в .gitignore до первого коммита.",
+          "Если upload-ключ потерян, запросите сброс ключа загрузки в Play Console (возможно только при включённом Play App Signing).",
+          "Убедитесь, что имя пакета окончательное, до первой загрузки — изменить его нельзя никогда."
+        ]
+      },
+      "files": ["android/app/build.gradle", "android/keystore.properties", ".gitignore"],
+      "aiPrompt": {
+        "en": "Set up secure Android release signing for my Capacitor project with Play App Signing. Give me: the keytool command to generate an upload keystore with correct parameters and validity, the keystore.properties template, the build.gradle signingConfigs block reading from it, the .gitignore entries, the gradle command to produce a release AAB, and a 5-line backup checklist I can follow so I never lose the key.",
+        "ru": "Настрой безопасную подпись релиза Android для моего Capacitor-проекта с Play App Signing. Дай: команду keytool для генерации upload-keystore с правильными параметрами и сроком действия, шаблон keystore.properties, блок signingConfigs в build.gradle, читающий из него, записи для .gitignore, команду gradle для сборки релизного AAB и чек-лист бэкапа из 5 пунктов, чтобы никогда не потерять ключ."
+      },
+      "kit": "playbook/23-google-signing.md"
+    },
+    {
+      "id": "cross-store-rejection-loop",
+      "platform": "both",
+      "guideline": "Process",
+      "name": { "en": "Repeated rejection loop / how to reply to review", "ru": "Цикл повторных отказов / как отвечать ревью" },
+      "code": "process",
+      "match": [
+        "rejected again",
+        "second rejection",
+        "resolution centre",
+        "reply to review",
+        "appeal",
+        "same rejection",
+        "still rejected"
+      ],
+      "severity": "high",
+      "frequency": "high",
+      "reason": {
+        "en": "Most people lose days replying with arguments instead of shipping a fix, or resubmitting without changing anything. Review teams read the Resolution Centre reply as evidence of whether you understood the problem.",
+        "ru": "Большинство теряет дни, отвечая аргументами вместо того, чтобы выкатить исправление, либо переотправляет билд без изменений. Команды ревью читают ответ в Resolution Centre как доказательство того, поняли ли вы проблему."
+      },
+      "fix": {
+        "en": [
+          "Never argue first. Fix, rebuild, then reply with what you changed and where.",
+          "Structure every reply: (1) restate the issue in their words, (2) list the concrete changes, (3) say where the reviewer can verify each change, (4) provide updated demo credentials and a video link.",
+          "If you genuinely believe it is a mistake, say so once, politely, with evidence — then still offer a change that removes ambiguity.",
+          "Resubmit with an incremented build number and updated release notes describing the fix.",
+          "Track every rejection in a log: date, guideline, root cause, fix, time lost. After 3 entries you will see your systematic weakness.",
+          "Budget 3 review cycles for a first submission. Anyone promising first-try approval is selling something."
+        ],
+        "ru": [
+          "Никогда не начинайте со спора. Исправьте, пересоберите, затем ответьте: что изменилось и где это видно.",
+          "Структура каждого ответа: (1) повторите проблему их словами, (2) перечислите конкретные изменения, (3) укажите, где ревьюер может проверить каждое, (4) приложите обновлённые демо-доступы и ссылку на видео.",
+          "Если действительно считаете это ошибкой, скажите об этом один раз, вежливо и с доказательствами — но всё равно предложите изменение, снимающее неоднозначность.",
+          "Переотправляйте с увеличенным номером билда и обновлёнными заметками к релизу, описывающими исправление.",
+          "Ведите лог отказов: дата, пункт правил, корневая причина, исправление, потерянное время. После трёх записей вы увидите свою системную слабость.",
+          "Закладывайте 3 круга ревью на первую отправку. Любой, кто обещает одобрение с первого раза, что-то продаёт."
+        ]
+      },
+      "files": ["Resolution Centre / Play Console reply", "rejection log"],
+      "aiPrompt": {
+        "en": "Here is the exact rejection message I received: \"{REJECTION_TEXT}\". My app: {APP_DESCRIPTION}. Act as an App Store review specialist. Tell me: (1) which guideline this really is and what the reviewer actually saw, (2) the minimum change that resolves it, (3) a draft Resolution Centre reply in their vocabulary, (4) what to put in the new release notes, (5) the probability this same issue recurs and the preventive change that kills it permanently.",
+        "ru": "Вот точный текст отказа: \"{REJECTION_TEXT}\". Моё приложение: {APP_DESCRIPTION}. выступи как специалист по ревью App Store. Скажи: (1) какой это пункт правил на самом деле и что именно увидел ревьюер, (2) минимальное изменение, которое это закрывает, (3) черновик ответа в Resolution Centre в их терминологии, (4) что написать в заметках к релизу, (5) вероятность повторения проблемы и профилактическое изменение, которое убивает её навсегда."
+      },
+      "kit": "playbook/24-reply-templates.md"
+    },
+    {
+      "id": "apple-sign-in-with-apple",
+      "platform": "apple",
+      "guideline": "4.8",
+      "name": { "en": "Sign in with Apple required", "ru": "Требуется Sign in with Apple" },
+      "code": "4.8",
+      "match": [
+        "4.8",
+        "Sign in with Apple",
+        "third-party login",
+        "social login",
+        "login service"
+      ],
+      "severity": "blocker",
+      "frequency": "high",
+      "reason": {
+        "en": "If your app uses a third-party or social login (Google, Facebook, phone number) to authenticate the user's primary account, you must also offer Sign in with Apple. Limited exceptions exist for education/enterprise apps, company-only accounts, and apps whose account is tied to a real-world service.",
+        "ru": "Если приложение использует сторонний или социальный вход (Google, Facebook, номер телефона) для авторизации основной учётной записи, вы обязаны предложить и Sign in with Apple. Есть ограниченные исключения для образовательных и корпоративных приложений, аккаунтов одной компании и приложений, где учётная запись привязана к реальному сервису."
+      },
+      "fix": {
+        "en": [
+          "Add Sign in with Apple as a first-class option on the login screen, with the official button style.",
+          "Enable the capability for the App ID and in Xcode → Signing & Capabilities.",
+          "Handle the 'Hide My Email' relay address — your backend must accept and store it.",
+          "Support the account-linking case: the same human signing in with Google and Apple must not create two accounts.",
+          "Also handle Apple's private email forwarding being disabled by the user.",
+          "On Android, Sign in with Apple is not required, but keeping parity simplifies your backend."
+        ],
+        "ru": [
+          "Добавьте Sign in with Apple как полноценный вариант на экране входа, с официальным стилем кнопки.",
+          "Включите capability для App ID и в Xcode → Signing & Capabilities.",
+          "Обработайте relay-адрес «Hide My Email» — бэкенд должен его принимать и хранить.",
+          "Поддержите связывание аккаунтов: один и тот же человек, вошедший через Google и Apple, не должен получать две учётки.",
+          "Учтите случай, когда пользователь отключил пересылку приватного email Apple.",
+          "На Android Sign in with Apple не требуется, но паритет упрощает бэкенд."
+        ]
+      },
+      "files": ["login screen", "App ID capability", "backend auth linking"],
+      "aiPrompt": {
+        "en": "Add Sign in with Apple to my app to satisfy Guideline 4.8. Stack {STACK}, auth {AUTH_PROVIDER}, wrapper Capacitor. Deliver: the native capability setup, the client integration with the correct plugin, the backend handling for the identity token including Hide My Email relay addresses, the account-linking logic so an existing Google user and Apple user merge instead of duplicating, and the login screen button layout that matches Apple's HIG.",
+        "ru": "Добавь Sign in with Apple в моё приложение для соответствия правилу 4.8. Стек {STACK}, авторизация {AUTH_PROVIDER}, обёртка Capacitor. Нужно: настройка нативной capability, клиентская интеграция с правильным плагином, обработка identity-токена на бэкенде включая relay-адреса Hide My Email, логика связывания аккаунтов, чтобы существующий пользователь Google и пользователь Apple объединялись вместо дублирования, и раскладка кнопок экрана входа по HIG Apple."
+      },
+      "kit": "playbook/25-apple-sign-in.md"
+    },
+    {
+      "id": "apple-webview-cookie",
+      "platform": "apple",
+      "guideline": "Technical (not a guideline)",
+      "name": { "en": "Login loop / cookies lost in WebView", "ru": "Цикл входа / теряются cookie в WebView" },
+      "code": "webview-cookies",
+      "match": [
+        "login loop",
+        "keeps logging me out",
+        "cookies",
+        "session",
+        "file://",
+        "CORS",
+        "redirect_uri",
+        "origin not allowed",
+        "cannot sign in on the app"
+      ],
+      "severity": "blocker",
+      "frequency": "very-high",
+      "reason": {
+        "en": "The most common functional failure in AI-built wrapper apps: Supabase/Auth0/Clerk/Cognito sessions rely on http origins and cookies, but a Capacitor export bundles assets and serves them from a local scheme. Result: infinite login loop, broken OAuth redirect, Sign in with Apple failing silently. This is not a store rejection — it is the bug that causes one.",
+        "ru": "Самый частый функциональный сбой в ИИ-обёртках: сессии Supabase/Auth0/Clerk/Cognito полагаются на http-origin и cookie, а экспорт Capacitor вшивает ассеты и отдаёт их с локальной схемы. Итог: бесконечный цикл входа, сломанный OAuth-редирект, молча падающий Sign in with Apple. Это не отказ стора — это баг, который его вызывает."
+      },
+      "fix": {
+        "en": [
+          "On iOS, Capacitor serves bundled content from a local http(s) scheme — set ios.scheme to 'https' (or keep the default 'capacitor' only if your auth supports custom schemes).",
+          "On Android, set androidScheme: 'https' and add your origin to the auth provider's allowed redirect list.",
+          "Register a custom URL scheme for OAuth redirects and handle it with the Capacitor App plugin's appUrlChange listener.",
+          "Prefer the system browser (ASWebAuthenticationSession / Capacitor Browser) for third-party OAuth, then return via deep link — this is what Apple expects.",
+          "Store the session in a native-backed store (Capacitor Preferences / Keychain) instead of relying only on cookies.",
+          "Add your app origin to Supabase Auth → URL Configuration → Redirect URLs, and to your CORS allowlist.",
+          "Never use server.url pointing at a remote https origin as your only fix — it re-introduces 4.2 risk."
+        ],
+        "ru": [
+          "На iOS Capacitor отдаёт локальный контент с локальной http(s)-схемы — установите ios.scheme в 'https' (или оставьте 'capacitor', только если ваша авторизация поддерживает кастомные схемы).",
+          "На Android задайте androidScheme: 'https' и добавьте свой origin в список разрешённых редиректов провайдера авторизации.",
+          "Зарегистрируйте кастомную URL-схему для OAuth-редиректов и обработайте её слушателем appUrlChange плагина Capacitor App.",
+          "Для стороннего OAuth используйте системный браузер (ASWebAuthenticationSession / Capacitor Browser) с возвратом по deep link — именно этого ждёт Apple.",
+          "Храните сессию в нативном хранилище (Capacitor Preferences / Keychain), а не только в cookie.",
+          "Добавьте origin приложения в Supabase Auth → URL Configuration → Redirect URLs и в allowlist CORS.",
+          "Не используйте server.url на удалённый https-origin как единственное решение — это возвращает риск отказа по 4.2."
+        ]
+      },
+      "files": ["capacitor.config.ts", "auth provider redirect allowlist", "native session storage"],
+      "aiPrompt": {
+        "en": "My Capacitor app has a login loop: auth works on the web but not in the app. Provider: {AUTH_PROVIDER}. Diagnose systematically: give me the exact capacitor.config.ts ios.scheme and androidScheme settings, the redirect URI format for both platforms, the provider dashboard fields I must update, the code to persist the session natively, and a debug script that prints the current origin, cookie jar state and stored token at each step so I can see where it breaks.",
+        "ru": "В моём Capacitor-приложении цикл входа: авторизация работает в вебе, но не в приложении. Провайдер: {AUTH_PROVIDER}. Проведи системную диагностику: дай точные настройки ios.scheme и androidScheme в capacitor.config.ts, формат redirect URI для обеих платформ, поля в панели провайдера, которые нужно обновить, код нативного сохранения сессии и отладочный скрипт, который на каждом шаге печатает текущий origin, состояние cookie и сохранённый токен, чтобы я увидел, где рвётся."
+      },
+      "kit": "playbook/26-webview-auth.md"
+    },
+    {
+      "id": "generic-unknown",
+      "platform": "both",
+      "guideline": "Unknown",
+      "name": { "en": "Unrecognised rejection text", "ru": "Нераспознанный текст отказа" },
+      "code": "unknown",
+      "match": [],
+      "severity": "info",
+      "frequency": "low",
+      "reason": {
+        "en": "No known pattern matched. Rejection messages are often vague on purpose. Extract the guideline number if present, the exact sentence describing what the reviewer did, and the sentence describing what they expected.",
+        "ru": "Совпадений с известными шаблонами нет. Тексты отказов часто намеренно размыты. Выделите номер пункта правил, если он есть, точное предложение о том, что сделал ревьюер, и предложение о том, чего он ожидал."
+      },
+      "fix": {
+        "en": [
+          "Reply in the Resolution Centre asking one precise question rather than re-submitting blindly — vague re-submissions waste 2-5 days each.",
+          "Search the exact rejection sentence in the Apple Developer Forums and Google Play community; other developers post the same text and what worked.",
+          "Record a video of your app doing the flow they claim fails, and attach it.",
+          "Check whether the reviewer tested on a device/locale/network you have not tested.",
+          "Use the AI prompt below with the full rejection text — a fresh model pass often identifies the guideline the reviewer meant."
+        ],
+        "ru": [
+          "Ответьте в Resolution Centre одним точным вопросом вместо слепой переотправки — каждый размытый повтор стоит 2-5 дней.",
+          "Вбейте точное предложение из отказа в поиск по Apple Developer Forums и сообществу Google Play: другие разработчики публикуют тот же текст и что помогло.",
+          "Запишите видео, где ваше приложение выполняет сценарий, который, по их словам, не работает, и приложите его.",
+          "Проверьте, не тестировал ли ревьюер на устройстве/локали/сети, которые вы не проверяли.",
+          "Используйте промпт ниже с полным текстом отказа — свежий проход модели часто определяет пункт, который имел в виду ревьюер."
+        ]
+      },
+      "files": [],
+      "aiPrompt": {
+        "en": "Here is a verbatim app store rejection message: \"{REJECTION_TEXT}\". Platform: {PLATFORM}. My app: {APP_DESCRIPTION}, stack {STACK}. Do four things: (1) identify the most likely guideline number and quote the relevant part of the official guideline text, (2) reconstruct what the reviewer most plausibly did and saw, (3) list the 3 cheapest fixes in order of likelihood to resolve it, (4) draft a Resolution Centre reply that is specific, non-defensive and shows I understood the issue.",
+        "ru": "Вот дословный текст отказа из стора: \"{REJECTION_TEXT}\". Платформа: {PLATFORM}. Моё приложение: {APP_DESCRIPTION}, стек {STACK}. Сделай четыре вещи: (1) определи наиболее вероятный номер пункта правил и процитируй релевантную часть официального текста, (2) реконструируй, что вероятнее всего сделал и увидел ревьюер, (3) перечисли 3 самых дешёвых исправления в порядке вероятности решения проблемы, (4) составь ответ в Resolution Centre — конкретный, не оправдывающийся и показывающий, что я понял проблему."
+      },
+      "kit": "playbook/00-triage.md"
+    }
+  ]
+}
